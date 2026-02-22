@@ -27,7 +27,6 @@
 | **Color** | Green (Beginner) |
 | **Edge Color** | Blue |
 | **When to Apply** | Boundaries/I/O |
-| **Concept Type** | Principle |
 | **Learn More** | https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/ |
 
 ### BACK (Problem)
@@ -52,7 +51,6 @@
 | **Color** | Green (Beginner) |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
-| **Concept Type** | Pattern |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
 ### BACK (Problem)
@@ -77,7 +75,6 @@
 | **Color** | Green (Beginner) |
 | **Edge Color** | Purple / Orange |
 | **When to Apply** | Domain modeling, State machines |
-| **Concept Type** | Principle |
 | **Learn More** | https://www.youtube.com/watch?v=IcgmSRJHu_8 |
 
 ### BACK (Problem)
@@ -102,7 +99,6 @@
 | **Color** | Green (Beginner) |
 | **Edge Color** | Purple / Orange |
 | **When to Apply** | Domain modeling, State machines |
-| **Concept Type** | Technique |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking |
 
 ### BACK (Problem)
@@ -127,7 +123,6 @@
 | **Color** | Green (Beginner) |
 | **Edge Color** | Blue / Teal |
 | **When to Apply** | Boundaries/I/O, API design |
-| **Concept Type** | Pattern |
 | **Learn More** | https://github.com/supermacro/neverthrow |
 
 ### BACK (Problem)
@@ -152,7 +147,6 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
-| **Concept Type** | Technique |
 | **Learn More** | https://egghead.io/blog/using-branded-types-in-typescript |
 
 ### BACK (Problem)
@@ -177,7 +171,6 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple / Pink |
 | **When to Apply** | Domain modeling, Module-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
 
 ### BACK (Problem)
@@ -202,7 +195,6 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple / Cyan |
 | **When to Apply** | Domain modeling, Value-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://zod.dev/?id=refine |
 
 ### BACK (Problem)
@@ -227,7 +219,6 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
-| **Concept Type** | Pattern |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html |
 
 ### BACK (Problem)
@@ -252,7 +243,6 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Gray |
 | **When to Apply** | Function-level |
-| **Concept Type** | Principle |
 | **Learn More** | https://wiki.haskell.org/Partial_functions |
 
 ### BACK (Problem)
@@ -277,7 +267,6 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
-| **Concept Type** | Technique |
 | **Learn More** | https://wiki.haskell.org/Smart_constructors |
 
 ### BACK (Problem)
@@ -302,7 +291,6 @@
 | **Color** | Red (Advanced) |
 | **Edge Color** | Orange |
 | **When to Apply** | State machines |
-| **Concept Type** | Technique |
 | **Learn More** | https://www.learninghaskell.com/phantom-types |
 
 ### BACK (Problem)
@@ -327,7 +315,6 @@
 | **Color** | Red (Advanced) |
 | **Edge Color** | Blue / Brown |
 | **When to Apply** | Boundaries/I/O, System-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
 
 ### BACK (Problem)
@@ -352,7 +339,6 @@
 | **Color** | Red (Advanced) |
 | **Edge Color** | Teal |
 | **When to Apply** | API design |
-| **Concept Type** | Technique |
 | **Learn More** | https://blog.rust-lang.org/2015/05/11/traits.html#the-builder-pattern |
 
 ### BACK (Problem)
@@ -380,7 +366,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Orange |
 | **When to Apply** | State machines |
-| **Concept Type** | Pattern |
 | **Learn More** | https://en.wikipedia.org/wiki/Typestate_analysis |
 
 ### BACK (Problem)
@@ -405,7 +390,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Red (Advanced) |
 | **Edge Color** | Purple / Cyan |
 | **When to Apply** | Domain modeling, Value-level |
-| **Concept Type** | Technique |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/generics.html |
 
 ### BACK (Problem)
@@ -430,7 +414,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Cyan |
 | **When to Apply** | Value-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure |
 
 ### BACK (Problem)
@@ -455,7 +438,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Red (Advanced) |
 | **Edge Color** | Brown / Teal |
 | **When to Apply** | System-level, API design |
-| **Concept Type** | Principle |
 | **Learn More** | https://en.wikipedia.org/wiki/Object-capability_model |
 
 ### BACK (Problem)
@@ -482,7 +464,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Function-level, API design |
 | **When NOT to Apply** | Tiny scripts where effect boundaries are obvious and short-lived. |
 | **Runtime Pair** | Structured effect wrappers (`Task`, `ReaderTaskEither`, service interfaces). |
-| **Concept Type** | Principle |
 | **Learn More** | https://en.wikipedia.org/wiki/Effect_system |
 
 ---
@@ -499,7 +480,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Blue / Gray |
 | **When to Apply** | Boundaries/I/O, Function-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://fsharpforfunandprofit.com/posts/recipe-part2/ |
 
 ### BACK (Problem)
@@ -524,7 +504,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Teal / Brown |
 | **When to Apply** | API design, System-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
 ### BACK (Problem)
@@ -549,7 +528,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Green (Beginner) |
 | **Edge Color** | Blue / Pink |
 | **When to Apply** | Boundaries/I/O, Module-level |
-| **Concept Type** | Technique |
 | **Learn More** | https://zod.dev/ |
 
 ### BACK (Problem)
@@ -574,7 +552,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Red (Advanced) |
 | **Edge Color** | Gray |
 | **When to Apply** | Function-level |
-| **Concept Type** | Principle |
 | **Learn More** | https://wiki.haskell.org/Typeclassopedia |
 
 ### BACK (Problem)
@@ -599,7 +576,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Gray / Purple |
 | **When to Apply** | Function-level, Domain modeling |
-| **Concept Type** | Technique |
 | **Learn More** | https://fast-check.dev/ |
 
 ### BACK (Problem)
@@ -624,7 +600,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple / Blue |
 | **When to Apply** | Domain modeling, Boundaries/I/O |
-| **Concept Type** | Pattern |
 | **Learn More** | https://tc39.es/proposal-temporal/docs/ |
 
 ### BACK (Problem)
@@ -649,7 +624,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Red (Advanced) |
 | **Edge Color** | Blue / Brown |
 | **When to Apply** | Boundaries/I/O, System-level |
-| **Concept Type** | Pattern |
 | **Learn More** | https://martinfowler.com/bliki/ParallelChange.html |
 
 ### BACK (Problem)
@@ -674,7 +648,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Color** | Green (Beginner) |
 | **Edge Color** | Pink / Gray |
 | **When to Apply** | Module-level, Function-level |
-| **Concept Type** | Practice |
 | **Learn More** | https://www.typescriptlang.org/tsconfig#strict |
 
 ### BACK (Problem)
@@ -698,7 +671,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Domain modeling, Function-level |
 | **When NOT to Apply** | When absence needs rich failure context; use `Result` for error details. |
 | **Runtime Pair** | Helpers like `map`, `flatMap`, `getOrElse` to avoid null checks. |
-| **Concept Type** | Pattern |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/Option.ts.html |
 
 ### BACK (Problem)
@@ -725,7 +697,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Domain modeling |
 | **When NOT to Apply** | When values are alternatives, not combinations; use unions for `OR` cases. |
 | **Runtime Pair** | Structural validation for required fields at boundaries. |
-| **Concept Type** | Pattern |
 | **Learn More** | https://en.wikipedia.org/wiki/Algebraic_data_type |
 
 ### BACK (Problem)
@@ -752,7 +723,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Boundaries/I/O |
 | **When NOT to Apply** | Internal code paths where values are already trusted domain types. |
 | **Runtime Pair** | Schema validators/codecs (Zod, io-ts, valibot). |
-| **Concept Type** | Technique |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown |
 
 ### BACK (Problem)
@@ -779,7 +749,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Function-level |
 | **When NOT to Apply** | If a schema parser already does full validation at boundary. |
 | **Runtime Pair** | Shared guard/assert modules plus exhaustive unit tests for guards. |
-| **Concept Type** | Technique |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates |
 
 ### BACK (Problem)
@@ -806,7 +775,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Module-level, Function-level |
 | **When NOT to Apply** | Hot paths where copying costs dominate and mutability is intentionally encapsulated. |
 | **Runtime Pair** | Copy-on-write updates and immutable helpers. |
-| **Concept Type** | Practice |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/objects.html#readonly-properties |
 
 ### BACK (Problem)
@@ -833,7 +801,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Module-level, API design |
 | **When NOT to Apply** | Throwaway prototypes where API stability is not a goal. |
 | **Runtime Pair** | `tsd`, `dtslint`, or `vitest` + `expectTypeOf`. |
-| **Concept Type** | Technique |
 | **Learn More** | https://github.com/SamVerschueren/tsd |
 
 ### BACK (Problem)
@@ -860,7 +827,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Domain modeling, Module-level, State machines, Value-level |
 | **When NOT to Apply** | When the domain does not justify extra type ceremony. |
 | **Runtime Pair** | Smart constructors and explicit conversion functions at boundaries. |
-| **Concept Type** | Guide |
 | **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
 
 ### BACK (Problem)
@@ -887,7 +853,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Boundaries/I/O, Module-level, System-level |
 | **When NOT to Apply** | Tiny apps with one trusted data source and minimal integration risk. |
 | **Runtime Pair** | Shared codec package plus boundary mappers per integration. |
-| **Concept Type** | Strategy |
 | **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
 
 ### BACK (Problem)
@@ -914,7 +879,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | State machines, API design |
 | **When NOT to Apply** | Simple constructors with few required fields. |
 | **Runtime Pair** | Minimal runtime assertions for cross-field invariants not expressible in types. |
-| **Concept Type** | Technique |
 | **Learn More** | https://en.wikipedia.org/wiki/Typestate_analysis |
 
 ### BACK (Problem)
@@ -941,7 +905,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Function-level, API design |
 | **When NOT to Apply** | When you need all validation errors at once (not first-error wins). |
 | **Runtime Pair** | `neverthrow` `Result/ResultAsync` with `.andThen`, `.map`, `.mapErr`. |
-| **Concept Type** | Pattern |
 | **Learn More** | https://fsharpforfunandprofit.com/rop/ |
 
 ### BACK (Problem)
@@ -968,7 +931,6 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **When to Apply** | Boundaries/I/O, Function-level |
 | **When NOT to Apply** | When later steps depend on earlier successful outputs; use Railway there. |
 | **Runtime Pair** | `ValidationError[]` + combinators like `combineWithAllErrors`. |
-| **Concept Type** | Pattern |
 | **Learn More** | https://github.com/supermacro/neverthrow |
 
 ### BACK (Problem)
@@ -978,3 +940,4 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Title** | First-Error-Only UX |
 | **Description** | Users fix one form error at a time because validation stops too early. |
 | **Example** | Submit shows `"Email invalid"`; after fix, next submit shows `"Password too short"`; repeat. |
+
