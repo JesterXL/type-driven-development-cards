@@ -22,8 +22,8 @@
 | Field | Content |
 |-------|---------|
 | **Title** | Parse, Don't Validate |
-| **Description** | Transform untyped data into typed structures at system boundaries. Once parsed, trust the types internally. |
-| **Example** | `const user = UserSchema.parse(json)` at the boundary, then `user.name` and `user.email` are guaranteed valid everywhere |
+| **Description** | Transform untyped data into typed structures at system boundaries. Once parsed, trust the types in the rest of your code. |
+| **Example** | `const user = ZodUserSchema.parse(json)` at the boundary, then `user.name` and `user.email` are guaranteed valid everywhere |
 | **Color** | Green (Beginner) |
 | **Edge Color** | Blue |
 | **When to Apply** | Boundaries/I/O |
@@ -35,37 +35,12 @@
 | Field | Content |
 |-------|---------|
 | **Title** | Shotgun Parsing |
-| **Description** | Validation logic scattered throughout codebase, checking the same fields repeatedly in different places, inconsistent handling of invalid data. |
-| **Example** | `if (json.name && typeof json.name === 'string' && json.email && json.email.includes('@')) { ... }` repeated in 5 different files |
+| **Description** | Validation logic scattered throughout codebase, checking the same fields repeatedly in different places, only checking the fields a function/method needs, inconsistent handling of invalid data. |
+| **Example** | `if (json.name && typeof json.name !== 'string') { throw new Error('Name is needs to be a string') }` repeated in 5 different files. What about `json.email` or other fields? |
 
 ---
 
 ## Card 2
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Make Impossible States Impossible |
-| **Description** | Design types so invalid states cannot be represented. Use discriminated unions to make each state explicit. |
-| **Example** | `type Request = { tag: 'loading' } \| { tag: 'success', data: User } \| { tag: 'error', error: string }` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Purple / Orange |
-| **When to Apply** | Domain modeling, State machines |
-| **Concept Type** | Principle |
-| **Learn More** | https://www.youtube.com/watch?v=IcgmSRJHu_8 |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Invalid State Combinations |
-| **Description** | Optional fields with implicit relationships where certain combinations are meaningless or contradictory. |
-| **Example** | `type Request = { loading?: boolean, data?: User, error?: string }` — what does `{ loading: true, data: someUser, error: "failed" }` mean? |
-
----
-
-## Card 3
 
 ### FRONT (Solution)
 
@@ -87,6 +62,31 @@
 | **Title** | Boolean Blindness |
 | **Description** | Using booleans or strings to represent states loses information and requires runtime checks to determine meaning. |
 | **Example** | `function process(success: boolean, data?: User, error?: string)` — caller must remember what `true` means |
+
+---
+
+## Card 3
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Make Impossible States Impossible |
+| **Description** | Design types so invalid states cannot be represented. Use discriminated unions to make each state explicit. |
+| **Example** | `type Request = { tag: 'loading' } \| { tag: 'success', data: User } \| { tag: 'error', error: string }` |
+| **Color** | Green (Beginner) |
+| **Edge Color** | Purple / Orange |
+| **When to Apply** | Domain modeling, State machines |
+| **Concept Type** | Principle |
+| **Learn More** | https://www.youtube.com/watch?v=IcgmSRJHu_8 |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Invalid State Combinations |
+| **Description** | Optional fields with implicit relationships where certain combinations are meaningless or contradictory. |
+| **Example** | `type Request = { loading: boolean, data?: User, error?: string }` — what does `{ loading: true, data: someUser, error: "failed" }` mean? |
 
 ---
 
