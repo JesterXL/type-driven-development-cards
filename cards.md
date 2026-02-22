@@ -443,9 +443,9 @@ add(usd1, usd2); // ok
 
 | Field | Content |
 |-------|---------|
-| **Title** | Lost Invariants |
-| **Description** | Important relationships between values are implicit and can be broken silently. |
-| **Example** | `zip([1,2,3], ['a'])` truncates unexpectedly |
+| **Title** | Currency Mixups |
+| **Description** | Monetary values with different currencies are treated as plain numbers, so invalid operations compile and produce incorrect totals. |
+| **Example** | `add({ amount: 10, currency: 'USD' }, { amount: 7, currency: 'EUR' })` silently mixes currencies without conversion |
 
 ---
 
