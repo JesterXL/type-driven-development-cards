@@ -95,7 +95,7 @@
 |-------|---------|
 | **Title** | Exhaustiveness Checking |
 | **Description** | Compiler ensures all union cases are handled. Add new variant and compiler shows every place to update. |
-| **Example** | `const _exhaustive: never = result` in default case — compile error if case is unhandled |
+| **Example** | `switch(request.tag) { case 'loading': ... case 'success': ... }` Compiler will tell you that you forgot the 'error' case. Also, you don't need a `default` case. |
 | **Color** | Green (Beginner) |
 | **Edge Color** | Purple / Orange |
 | **When to Apply** | Domain modeling, State machines |
@@ -106,8 +106,8 @@
 | Field | Content |
 |-------|---------|
 | **Title** | Forgotten Case Bugs |
-| **Description** | Adding a new enum value or status and missing handlers in switch statements, discovered only at runtime. |
-| **Example** | `switch (status) { case 'pending': ...; case 'complete': ... }` — added `'cancelled'` but forgot to handle it |
+| **Description** | Adding a new string status and missing handlers in switch statements, discovered only at runtime. |
+| **Example** | `type Request = { status: string, data?: User, error?: string } switch (request.status) { case 'loading': ...; case 'success': ... }` — added `'cancelled'` but forgot to handle it. |
 
 ---
 
@@ -119,7 +119,7 @@
 |-------|---------|
 | **Title** | Result Types |
 | **Description** | Return success or failure explicitly in the type. Caller must handle both cases. |
-| **Example** | `function getUser(id: string): Result<User, NotFoundError \| ValidationError>` |
+| **Example** | `function getUser(id: string): Result<User, NotFoundError>` |
 | **Color** | Green (Beginner) |
 | **Edge Color** | Blue / Teal |
 | **When to Apply** | Boundaries/I/O, API design |
@@ -130,8 +130,8 @@
 | Field | Content |
 |-------|---------|
 | **Title** | Exception Blindness |
-| **Description** | `try/catch` doesn't tell you what can fail from the type signature. Exceptions bypass the type system entirely. |
-| **Example** | `function getUser(id: string): User` — throws `NotFoundError`? `ValidationError`? `DatabaseError`? Who knows! |
+| **Description** | `try/catch` doesn't tell you what can fail from the type signature. Exceptions bypass the type system entirely. Error type also tells you how to recover if possible, e.g. `ValidationError`: user can fix input. `Throttled`: retry/backoff is valid. `Unknown`: unrecoverable here; escalate/fail fast. |
+| **Example** | `function getUser(id: string): User` — throws `NotFoundError`? `ValidationError`? `DatabaseError`? Who knows! Have to read the code and write unit tests in case code stops throwing error you may want to recover from. |
 
 ---
 
@@ -155,7 +155,7 @@
 |-------|---------|
 | **Title** | Primitive Mixups |
 | **Description** | Accidentally passing one ID where another is expected. Compiler can't distinguish between two `string` values. |
-| **Example** | `getProduct(userId)` compiles fine but fails at runtime — both are just `string` |
+| **Example** | Accidentally passing a `productId` to `getProduct(userId)` compiles fine but fails at runtime — both are just `string` |
 
 ---
 
@@ -167,7 +167,7 @@
 |-------|---------|
 | **Title** | Opaque Types |
 | **Description** | Hide internal representation, force construction through validated factory function. |
-| **Example** | `type Email = ...` (internal) with only `createEmail(s: string): Email \| null` exported |
+| **Example** | `type ValidEmail = ...` (internal) with only `createEmail(s: string): ValidEmail \| undefined` exported |
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple / Pink |
 | **When to Apply** | Domain modeling, Module-level |
@@ -191,7 +191,7 @@
 |-------|---------|
 | **Title** | Refinement Types |
 | **Description** | Narrow primitives to constrained subsets with semantic meaning. |
-| **Example** | `type PositiveNumber = number & { _brand: 'positive' }` with smart constructor |
+| **Example** | `type PositiveNumber = number & { _brand: 'positive' }` with smart constructor. Now `function divide(a: number, b: PositiveNumber):number` won't give you back `Infinity` because you can no longer divide by zero. |
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple / Cyan |
 | **When to Apply** | Domain modeling, Value-level |
@@ -203,7 +203,7 @@
 |-------|---------|
 | **Title** | Primitive Obsession |
 | **Description** | Using raw primitives when only a subset of values is valid, requiring defensive checks everywhere. |
-| **Example** | `function divide(a: number, b: number)` — must check `b !== 0` inside, caller can pass anything |
+| **Example** | `function divide(a: number, b: number):number` — must check `b !== 0` inside, caller can pass anything, as well if result is `NaN` or `Infinity/-Infinity`. |
 
 ---
 
@@ -214,8 +214,8 @@
 | Field | Content |
 |-------|---------|
 | **Title** | NonEmpty Collections |
-| **Description** | Type that guarantees at least one element exists. |
-| **Example** | `type NonEmptyArray<T> = [T, ...T[]]` |
+| **Description** | Type that guarantees at least one element exists in an Array. |
+| **Example** | `type NonEmptyArray<T> = [T, ...T[]]` or `type AtLeast1Item<T> = { first: T, rest: T[] }` |
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
@@ -227,7 +227,7 @@
 |-------|---------|
 | **Title** | Empty Collection Crashes |
 | **Description** | Accessing first element or reducing without initial value on potentially empty arrays. |
-| **Example** | `const first = items[0]` — undefined if empty; `items.reduce((a, b) => a + b)` — throws if empty |
+| **Example** | `const first = items[0]` — `undefined` if empty; `items.reduce((a, b) => a + b)` — throws if empty |
 
 ---
 
@@ -239,7 +239,7 @@
 |-------|---------|
 | **Title** | Total Functions |
 | **Description** | Function that returns a value for every possible input. No exceptions, no undefined behavior. |
-| **Example** | `divide(a: number, b: NonZeroNumber): number` — impossible to pass zero |
+| **Example** | `divide(a: number, b: PositiveNumber): number` — impossible to pass zero |
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Gray |
 | **When to Apply** | Function-level |
@@ -251,7 +251,7 @@
 |-------|---------|
 | **Title** | Partial Functions |
 | **Description** | Functions that throw or crash for some inputs, with hidden failure modes not visible in the type signature. |
-| **Example** | `function divide(a: number, b: number): number { return a / b }` — returns `Infinity` or `NaN` for edge cases |
+| **Example** | `function divide(a: number, b: number): number { return a / b }` — returns `Infinity` or `NaN` for edge cases. |
 
 ---
 
@@ -267,7 +267,7 @@
 | **Color** | Yellow (Intermediate) |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
-| **Learn More** | https://wiki.haskell.org/Smart_constructors |
+| **Learn More** | https://wiki.haskell.org/Smart_constructors (TODO/FIXME: need different link) |
 
 ### BACK (Problem)
 
@@ -291,7 +291,7 @@
 | **Color** | Red (Advanced) |
 | **Edge Color** | Orange |
 | **When to Apply** | State machines |
-| **Learn More** | https://www.learninghaskell.com/phantom-types |
+| **Learn More** | https://dev.to/busypeoples/notes-on-typescript-phantom-types-kg9 |
 
 ### BACK (Problem)
 
@@ -322,12 +322,14 @@
 | Field | Content |
 |-------|---------|
 | **Title** | Leaky Abstractions |
-| **Description** | External API shapes spreading through codebase, coupling your domain to third-party structures. |
-| **Example** | `function processUser(user: StripeCustomerResponse)` used deep in business logic — Stripe changes, everything breaks |
+| **Description** | External API shapes spreading through codebase, coupling your domain to third-party structures. Also leads to Shotgun Parsing. |
+| **Example** | `function processUser(user: APIYouDontOwnResponse)` used deep in business logic — API changes, everything breaks. Their messy data makes your code messy. Data in Python snake case (e.g. `first_name`)? Now used in your `cameCase` code base making it harder to read. TODO/FIXME: I've seen some gnarly code, find it. |
 
 ---
 
 ## Card 14
+
+--- TODO/FIXME: Use the Elm version for UI development instead of this Rust one.
 
 ### FRONT (Solution)
 
@@ -348,9 +350,6 @@
 | **Title** | Runtime Builder Errors |
 | **Description** | Forgetting required fields in builder pattern, discovered only when `.build()` throws at runtime. |
 | **Example** | `new RequestBuilder().setHeaders({...}).build()` — forgot URL, throws "URL is required" |
-
-
-Below are new cards (continuing from Card 14). I skipped **Smart Constructors** and **Refinement Types** since you already have them.
 
 ---
 
@@ -386,7 +385,24 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 |-------|---------|
 | **Title** | Indexed Types |
 | **Description** | Carry useful facts in type parameters (length, state, currency, etc.) so operations preserve invariants. |
-| **Example** | `type Vec<T, N extends number> = { values: T[]; length: N }; zip<A, B, N>(a: Vec<A, N>, b: Vec<B, N>): Vec<[A, B], N>` |
+| **Example** | <pre><code>type USD = { readonly _unit: "USD" };
+type EUR = { readonly _unit: "EUR" };
+
+type Money<C> = {
+  amount: number;
+  currency: C;
+};
+
+function add<C>(a: Money<C>, b: Money<C>): Money<C> {
+  return { amount: a.amount + b.amount, currency: a.currency };
+}
+
+const usd1: Money<USD> = { amount: 10, currency: { _unit: "USD" } };
+const usd2: Money<USD> = { amount: 5, currency: { _unit: "USD" } };
+const eur1: Money<EUR> = { amount: 7, currency: { _unit: "EUR" } };
+
+add(usd1, usd2); // ok
+// add(usd1, eur1); // compile-time error</code></pre> |
 | **Color** | Red (Advanced) |
 | **Edge Color** | Purple / Cyan |
 | **When to Apply** | Domain modeling, Value-level |
