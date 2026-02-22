@@ -684,15 +684,246 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 | **Title** | Silent Unsoundness |
 | **Description** | Looser compiler settings allow unsafe assumptions that surface later as runtime bugs. |
 | **Example** | `users[id].name` compiles, but `users[id]` can be `undefined` |
+## Card 28
 
-Use **2 cards**, not 1.
+### FRONT (Solution)
 
-`Railway` and `Validation Pipeline` are complementary, and the contrast is a key teaching moment:
+| Field | Content |
+|-------|---------|
+| **Title** | Option / Maybe Type |
+| **Description** | Represent absence explicitly with `Some`/`None` instead of `null` or `undefined`. |
+| **Example** | `type Option<T> = { tag: 'Some', value: T } \| { tag: 'None' }` |
+| **Color** | Green (Beginner) |
+| **Edge Color** | Purple / Gray |
+| **When to Apply** | Domain modeling, Function-level |
+| **When NOT to Apply** | When absence needs rich failure context; use `Result` for error details. |
+| **Runtime Pair** | Helpers like `map`, `flatMap`, `getOrElse` to avoid null checks. |
+| **Concept Type** | Pattern |
+| **Learn More** | https://gcanti.github.io/fp-ts/modules/Option.ts.html |
 
-1. `Railway` = **monadic, fail-fast** composition (`andThen`).
-2. `Validation Pipeline` = **applicative, accumulate errors** composition (all field errors at once).
+### BACK (Problem)
 
-If you only have room for one, pick Railway. If you can fit two, teach both.
+| Field | Content |
+|-------|---------|
+| **Title** | Null Pointer Branching |
+| **Description** | `null`/`undefined` checks spread across code and are easy to forget in one branch. |
+| **Example** | `user.address.city` throws when `address` is `undefined` |
+
+---
+
+## Card 29
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Product Types (Records) |
+| **Description** | Model data that must exist together with named fields (`AND` composition). |
+| **Example** | `type Money = { amount: number, currency: Currency }` |
+| **Color** | Green (Beginner) |
+| **Edge Color** | Purple |
+| **When to Apply** | Domain modeling |
+| **When NOT to Apply** | When values are alternatives, not combinations; use unions for `OR` cases. |
+| **Runtime Pair** | Structural validation for required fields at boundaries. |
+| **Concept Type** | Pattern |
+| **Learn More** | https://en.wikipedia.org/wiki/Algebraic_data_type |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Positional and Parallel Data Bugs |
+| **Description** | Loosely related values are passed separately, reordered accidentally, or updated inconsistently. |
+| **Example** | `charge(100, "USD")` vs `charge("USD", 100)` |
+
+---
+
+## Card 30
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Unknown at Boundaries |
+| **Description** | Accept external input as `unknown`, then parse/narrow once into trusted domain types. |
+| **Example** | `function parseUser(input: unknown): Result<User, ParseError>` |
+| **Color** | Green (Beginner) |
+| **Edge Color** | Blue |
+| **When to Apply** | Boundaries/I/O |
+| **When NOT to Apply** | Internal code paths where values are already trusted domain types. |
+| **Runtime Pair** | Schema validators/codecs (Zod, io-ts, valibot). |
+| **Concept Type** | Technique |
+| **Learn More** | https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Any-Typed Boundary Leaks |
+| **Description** | Untrusted inputs enter the core system without parsing, causing late runtime failures. |
+| **Example** | API payload typed as `any` reaches business logic and crashes on missing fields |
+
+---
+
+## Card 31
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Type Predicates and Assertion Functions |
+| **Description** | Centralize narrowing logic in reusable guards so callers gain precise types after checks. |
+| **Example** | `function isEmail(x: unknown): x is Email { ... }` |
+| **Color** | Yellow (Intermediate) |
+| **Edge Color** | Gray |
+| **When to Apply** | Function-level |
+| **When NOT to Apply** | If a schema parser already does full validation at boundary. |
+| **Runtime Pair** | Shared guard/assert modules plus exhaustive unit tests for guards. |
+| **Concept Type** | Technique |
+| **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Ad-Hoc Narrowing |
+| **Description** | Inline checks diverge over time, yielding inconsistent behavior and weak inferred types. |
+| **Example** | Three different `isUser` checks in three files with different required fields |
+
+---
+
+## Card 32
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Readonly by Default |
+| **Description** | Prefer immutable shapes so mutation is explicit and local, reducing aliasing bugs. |
+| **Example** | `type User = { readonly id: UserId, readonly email: Email }` |
+| **Color** | Yellow (Intermediate) |
+| **Edge Color** | Pink / Gray |
+| **When to Apply** | Module-level, Function-level |
+| **When NOT to Apply** | Hot paths where copying costs dominate and mutability is intentionally encapsulated. |
+| **Runtime Pair** | Copy-on-write updates and immutable helpers. |
+| **Concept Type** | Practice |
+| **Learn More** | https://www.typescriptlang.org/docs/handbook/2/objects.html#readonly-properties |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Incidental Mutation |
+| **Description** | Shared object references are mutated unexpectedly, causing non-local bugs and flaky behavior. |
+| **Example** | A helper function mutates `user.roles` and breaks permission checks elsewhere |
+
+---
+
+## Card 33
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Type-Level Tests |
+| **Description** | Add compile-time tests that lock API type behavior (`inference`, `assignability`, `errors`). |
+| **Example** | `expectType<UserId>(createUserId("u_123"))` and `// @ts-expect-error createUserId(123)` |
+| **Color** | Yellow (Intermediate) |
+| **Edge Color** | Pink / Teal |
+| **When to Apply** | Module-level, API design |
+| **When NOT to Apply** | Throwaway prototypes where API stability is not a goal. |
+| **Runtime Pair** | `tsd`, `dtslint`, or `vitest` + `expectTypeOf`. |
+| **Concept Type** | Technique |
+| **Learn More** | https://github.com/SamVerschueren/tsd |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Silent Type Regressions |
+| **Description** | Refactors preserve runtime behavior but accidentally widen or break type contracts. |
+| **Example** | A helper returns `string` instead of `UserId`, and misuse spreads |
+
+---
+
+## Card 34
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Nominal Type Toolbox |
+| **Description** | Use a progression: `Branded` for distinction, `Opaque` for encapsulation, `Refinement` for constraints, `Phantom` for state/index tracking. |
+| **Example** | `UserId` (brand), `Email` (opaque + smart constructor), `NonZero` (refinement), `Order<Submitted>` (phantom) |
+| **Color** | Yellow (Intermediate) |
+| **Edge Color** | Purple / Pink / Orange / Cyan |
+| **When to Apply** | Domain modeling, Module-level, State machines, Value-level |
+| **When NOT to Apply** | When the domain does not justify extra type ceremony. |
+| **Runtime Pair** | Smart constructors and explicit conversion functions at boundaries. |
+| **Concept Type** | Guide |
+| **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Nominal Modeling Confusion |
+| **Description** | Teams mix branding, opacity, and phantom techniques inconsistently, causing accidental complexity. |
+| **Example** | One module uses raw `string` IDs while another uses opaque IDs, forcing unsafe casts |
+
+---
+
+## Card 35
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Boundary Type Stack |
+| **Description** | Treat boundaries as a stack: `Unknown -> Parse/Codec -> Domain Type -> Anti-Corruption Mapping`. |
+| **Example** | `rawJson (unknown) -> ApiUserSchema.parse -> ApiUser -> toDomainUser -> User` |
+| **Color** | Red (Advanced) |
+| **Edge Color** | Blue / Pink / Brown |
+| **When to Apply** | Boundaries/I/O, Module-level, System-level |
+| **When NOT to Apply** | Tiny apps with one trusted data source and minimal integration risk. |
+| **Runtime Pair** | Shared codec package plus boundary mappers per integration. |
+| **Concept Type** | Strategy |
+| **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Boundary Drift |
+| **Description** | External payloads, parser logic, and domain shapes drift independently and break in subtle ways. |
+| **Example** | API adds `middle_name`; parser accepts it, but domain mapper silently drops required semantics |
+
+---
+
+## Card 36
+
+### FRONT (Solution)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Typestate Builder |
+| **Description** | Merge builder ergonomics with typestate constraints so required steps are enforced before `build`. |
+| **Example** | `RequestBuilder<{ url: Set, method: Set, body: Optional }>.build()` |
+| **Color** | Red (Advanced) |
+| **Edge Color** | Orange / Teal |
+| **When to Apply** | State machines, API design |
+| **When NOT to Apply** | Simple constructors with few required fields. |
+| **Runtime Pair** | Minimal runtime assertions for cross-field invariants not expressible in types. |
+| **Concept Type** | Technique |
+| **Learn More** | https://en.wikipedia.org/wiki/Typestate_analysis |
+
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Runtime Builder Failures |
+| **Description** | Missing required steps are discovered only at runtime when `build()` throws. |
+| **Example** | `new RequestBuilder().setHeaders(h).build()` fails because URL was never set |
 
 ---
 
