@@ -385,24 +385,7 @@
 |-------|---------|
 | **Title** | Indexed Types |
 | **Description** | Carry useful facts in type parameters (length, state, currency, etc.) so operations preserve invariants. |
-| **Example** | <pre><code>type USD = { readonly _unit: "USD" };
-type EUR = { readonly _unit: "EUR" };
-
-type Money<C> = {
-  amount: number;
-  currency: C;
-};
-
-function add<C>(a: Money<C>, b: Money<C>): Money<C> {
-  return { amount: a.amount + b.amount, currency: a.currency };
-}
-
-const usd1: Money<USD> = { amount: 10, currency: { _unit: "USD" } };
-const usd2: Money<USD> = { amount: 5, currency: { _unit: "USD" } };
-const eur1: Money<EUR> = { amount: 7, currency: { _unit: "EUR" } };
-
-add(usd1, usd2); // ok
-// add(usd1, eur1); // compile-time error</code></pre> |
+| **Example** | `type USD = { readonly _unit: "USD" };<br/>type EUR = { readonly _unit: "EUR" };<br/>type Money<C> = { amount: number;<br/>currency: C;<br/><br/>};<br/>function add<C>(a: Money<C>, b: Money<C>): Money<C> {<br/> return { amount: a.amount + b.amount, currency: a.currency };<br/>}<br/><br/>const usd1: Money<USD> = { amount: 10, currency: { _unit: "USD" } };<br/>const usd2: Money<USD> = { amount: 5, currency: { _unit: "USD" } };<br/>const eur1: Money<EUR> = { amount: 7, currency: { _unit: "EUR" } };<br/><br/>add(usd1, usd2); // ok<br/>// add(usd1, eur1); // compile-time error` |
 | **Color** | Red (Advanced) |
 | **Edge Color** | Purple / Cyan |
 | **When to Apply** | Domain modeling, Value-level |
