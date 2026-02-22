@@ -381,15 +381,63 @@
 
 ### FRONT (Solution)
 
-| Field | Content |
-|-------|---------|
-| **Title** | Indexed Types |
-| **Description** | Carry useful facts in type parameters (length, state, currency, etc.) so operations preserve invariants. |
-| **Example** | `type USD = { readonly _unit: "USD" };<br/>type EUR = { readonly _unit: "EUR" };<br/>type Money<C> = { amount: number;<br/>currency: C;<br/><br/>};<br/>function add<C>(a: Money<C>, b: Money<C>): Money<C> {<br/> return { amount: a.amount + b.amount, currency: a.currency };<br/>}<br/><br/>const usd1: Money<USD> = { amount: 10, currency: { _unit: "USD" } };<br/>const usd2: Money<USD> = { amount: 5, currency: { _unit: "USD" } };<br/>const eur1: Money<EUR> = { amount: 7, currency: { _unit: "EUR" } };<br/><br/>add(usd1, usd2); // ok<br/>// add(usd1, eur1); // compile-time error` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Purple / Cyan |
-| **When to Apply** | Domain modeling, Value-level |
-| **Learn More** | https://www.typescriptlang.org/docs/handbook/2/generics.html |
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Title</strong></td>
+      <td>Indexed Types</td>
+    </tr>
+    <tr>
+      <td><strong>Description</strong></td>
+      <td>Carry useful facts in type parameters (length, state, currency, etc.) so operations preserve invariants.</td>
+    </tr>
+    <tr>
+      <td><strong>Example</strong></td>
+      <td>
+        <pre><code class="language-typescript">type USD = { readonly _unit: "USD" };
+type EUR = { readonly _unit: "EUR" };
+
+type Money&lt;C&gt; = {
+  amount: number;
+  currency: C;
+};
+
+function add&lt;C&gt;(a: Money&lt;C&gt;, b: Money&lt;C&gt;): Money&lt;C&gt; {
+  return { amount: a.amount + b.amount, currency: a.currency };
+}
+
+const usd1: Money&lt;USD&gt; = { amount: 10, currency: { _unit: "USD" } };
+const usd2: Money&lt;USD&gt; = { amount: 5, currency: { _unit: "USD" } };
+const eur1: Money&lt;EUR&gt; = { amount: 7, currency: { _unit: "EUR" } };
+
+add(usd1, usd2); // ok
+// add(usd1, eur1); // compile-time error</code></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Color</strong></td>
+      <td>Red (Advanced)</td>
+    </tr>
+    <tr>
+      <td><strong>Edge Color</strong></td>
+      <td>Purple / Cyan</td>
+    </tr>
+    <tr>
+      <td><strong>When to Apply</strong></td>
+      <td>Domain modeling, Value-level</td>
+    </tr>
+    <tr>
+      <td><strong>Learn More</strong></td>
+      <td><a href="https://www.typescriptlang.org/docs/handbook/2/generics.html">https://www.typescriptlang.org/docs/handbook/2/generics.html</a></td>
+    </tr>
+  </tbody>
+</table>
 
 ### BACK (Problem)
 
