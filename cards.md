@@ -468,28 +468,22 @@ Below are new cards (continuing from Card 14). I skipped **Smart Constructors** 
 
 ---
 
-## Card 19
+## Card 19 (REVISED)
 
 ### FRONT (Solution)
 
 | Field | Content |
 |-------|---------|
-| **Title** | Effect Typing |
-| **Description** | Make effects explicit in signatures (`IO`, `Async`, `DB`, `Network`) so effectful code is visible and composable. |
-| **Example** | `type TaskResult<A, E> = () => Promise<{ tag: 'Ok'; value: A } \| { tag: 'Err'; error: E }>` |
+| **Title** | Effect Typing (Function Coloring) |
+| **Description** | Make effects explicit in signatures (`Async`, `IO`, `DB`, `Network`) so effectful code is visible and composable. |
+| **Example** | `type TaskResult<A, E> = () => Promise<{ tag: 'Ok', value: A } \| { tag: 'Err', error: E }>` |
 | **Color** | Red (Advanced) |
 | **Edge Color** | Gray / Teal |
 | **When to Apply** | Function-level, API design |
+| **When NOT to Apply** | Tiny scripts where effect boundaries are obvious and short-lived. |
+| **Runtime Pair** | Structured effect wrappers (`Task`, `ReaderTaskEither`, service interfaces). |
 | **Concept Type** | Principle |
 | **Learn More** | https://en.wikipedia.org/wiki/Effect_system |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Hidden Effects / Function Coloring |
-| **Description** | A function starts pure, then calls async/IO code, and effect requirements leak upward unexpectedly. |
-| **Example** | `getDisplayName()` becomes `async getDisplayName()` after one Promise call |
 
 ---
 
