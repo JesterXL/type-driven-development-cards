@@ -453,15 +453,65 @@ add(usd1, usd2); // ok
 
 ### FRONT (Solution)
 
-| Field | Content |
-|-------|---------|
-| **Title** | Units-of-Measure Types |
-| **Description** | Encode physical/business units in types to prevent invalid arithmetic across incompatible dimensions. |
-| **Example** | `type Meters = number & { _unit: 'm' }; type Seconds = number & { _unit: 's' }` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Cyan |
-| **When to Apply** | Value-level |
-| **Learn More** | https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure |
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Title</strong></td>
+      <td>Units-of-Measure Types</td>
+    </tr>
+    <tr>
+      <td><strong>Description</strong></td>
+      <td>Encode physical/business units in types to prevent invalid arithmetic across incompatible dimensions.</td>
+    </tr>
+    <tr>
+      <td><strong>Example</strong></td>
+      <td>
+        <pre><code class="language-typescript">// Branded unit types
+type Meters = number & { readonly _unit: "m" };
+type Seconds = number & { readonly _unit: "s" };
+type MetersPerSecond = number & { readonly _unit: "m/s" };
+
+// Smart constructors
+const meters = (n: number): Meters => n as Meters;
+const seconds = (n: number): Seconds => n as Seconds;
+
+// Unit-safe operations
+const addMeters = (a: Meters, b: Meters): Meters => meters(a + b);
+const addSeconds = (a: Seconds, b: Seconds): Seconds => seconds(a + b);
+const divideMetersBySeconds = (d: Meters, t: Seconds): MetersPerSecond =>
+  (d / t) as MetersPerSecond;
+
+// Usage
+const distance = meters(100);
+const time = seconds(9.58);
+const speed = divideMetersBySeconds(distance, time);</code></pre>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>Color</strong></td>
+      <td>Yellow (Intermediate)</td>
+    </tr>
+    <tr>
+      <td><strong>Edge Color</strong></td>
+      <td>Cyan</td>
+    </tr>
+    <tr>
+      <td><strong>When to Apply</strong></td>
+      <td>Value-level</td>
+    </tr>
+    <tr>
+      <td><strong>Learn More</strong></td>
+      <td><a href="https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure">https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure</a></td>
+    </tr>
+  </tbody>
+</table>
+```
 
 ### BACK (Problem)
 
@@ -469,7 +519,8 @@ add(usd1, usd2); // ok
 |-------|---------|
 | **Title** | Unit Mixups |
 | **Description** | Values with different units are treated as plain numbers and combined incorrectly. |
-| **Example** | Adding miles to kilometers without conversion |
+| **Example** | <pre><code>// const bad = addMeters(distance, time);
+//            ^ Type error: Seconds is not assignable to Meters</code></pre> |
 
 ---
 
@@ -487,13 +538,16 @@ add(usd1, usd2); // ok
 | **When to Apply** | System-level, API design |
 | **Learn More** | https://en.wikipedia.org/wiki/Object-capability_model |
 
+--- TODO/FIXME: This one is tough to show problems; half is readability, the other half is too many dependencies to higher level functions.
+
 ### BACK (Problem)
 
 | Field | Content |
 |-------|---------|
 | **Title** | Ambient Authority |
-| **Description** | Code can perform hidden side effects because it can reach global DB/fs/network clients directly. |
+| **Description** | Code can perform hidden side effects because it can reach global DB/fs/network clients directly. You can also require a lot of dependencies to child functions through Dependency Injection. |
 | **Example** | A function that should only email users also mutates billing records |
+
 
 ---
 
@@ -504,7 +558,7 @@ add(usd1, usd2); // ok
 | Field | Content |
 |-------|---------|
 | **Title** | Effect Typing (Function Coloring) |
-| **Description** | Make effects explicit in signatures (`Async`, `IO`, `DB`, `Network`) so effectful code is visible and composable. |
+| **Description** | Make effects explicit in signatures (`Async`, `IO`, `DB`, `Network`) so effectful code is visible, composable, and can reduce unit testing using spies. |
 | **Example** | `type TaskResult<A, E> = () => Promise<{ tag: 'Ok', value: A } \| { tag: 'Err', error: E }>` |
 | **Color** | Red (Advanced) |
 | **Edge Color** | Gray / Teal |
@@ -513,11 +567,22 @@ add(usd1, usd2); // ok
 | **Runtime Pair** | Structured effect wrappers (`Task`, `ReaderTaskEither`, service interfaces). |
 | **Learn More** | https://en.wikipedia.org/wiki/Effect_system |
 
+### BACK (Problem)
+
+| Field | Content |
+|-------|---------|
+| **Title** | Hidden Effects / Function Coloring |
+| **Description** | A function starts pure, then calls async/IO code, and effect requirements leak upward unexpectedly. |
+| **Example** | `getDisplayName()` becomes `async getDisplayName()` after one Promise call |
+
+--- TODO/FIXME: Need the unit testing of logs here.
 ---
 
 ## Card 20
 
 ### FRONT (Solution)
+
+--- TODO/FIXME: Folktale has a great Validation accumulator for this
 
 | Field | Content |
 |-------|---------|
@@ -545,7 +610,7 @@ add(usd1, usd2); // ok
 
 | Field | Content |
 |-------|---------|
-| **Title** | Error Algebra |
+| **Title** | Error Algebra "Errors as Values" |
 | **Description** | Model domain errors as discriminated unions with explicit recovery meaning (retry, fix input, escalate, abort). |
 | **Example** | `type CheckoutError = { tag: 'CardDeclined' } \| { tag: 'InventoryChanged' } \| { tag: 'TransientNetwork'; retryAfterMs: number }` |
 | **Color** | Yellow (Intermediate) |
