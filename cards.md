@@ -24,9 +24,8 @@
 | **Title** | Parse, Don't Validate |
 | **Description** | Transform untyped data into typed structures at system boundaries. Once parsed, trust the types in the rest of your code. |
 | **Example** | `const user = ZodUserSchema.parse(json)` at the boundary, then `user.name` and `user.email` are guaranteed valid everywhere |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Blue |
-| **When to Apply** | Boundaries/I/O |
+| **Level** | Beginner |
+| **When to Apply** | Boundaries/IO |
 | **Learn More** | https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/ |
 
 ### BACK (Problem)
@@ -35,7 +34,7 @@
 |-------|---------|
 | **Title** | Shotgun Parsing |
 | **Description** | Validation logic scattered throughout codebase, checking the same fields repeatedly in different places, only checking the fields a function/method needs, inconsistent handling of invalid data. |
-| **Example** | `if (json.name && typeof json.name !== 'string') { throw new Error('Name is needs to be a string') }` repeated in 5 different files. What about `json.email` or other fields? |
+| **Example** | `if (json.name && typeof json.name !== 'string') { throw new Error('Name is needs to be a string') }` repeated in 5 different files. What about `json.email` or other fields? At any point of the code, bad data on just 1 field can crash the application. |
 
 ---
 
@@ -48,9 +47,8 @@
 | **Title** | Discriminated Unions |
 | **Description** | Use a `tag` field to distinguish between variants of a type. Enables exhaustive pattern matching. |
 | **Example** | `type Result<T, E> = { tag: 'Ok', value: T } \| { tag: 'Err', error: E }` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Purple |
-| **When to Apply** | Domain modeling |
+|**Level** | Beginner |
+| **When to Apply** | Domain modeling, State Machines |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
 ### BACK (Problem)
@@ -59,7 +57,7 @@
 |-------|---------|
 | **Title** | Boolean Blindness |
 | **Description** | Using booleans or strings to represent states loses information and requires runtime checks to determine meaning. |
-| **Example** | `function process(success: boolean, data?: User, error?: string)` — caller must remember what `true` means |
+| **Example** | `process(true, {}, undefined)` — caller must remember what `true` means, often having to read the function/method contents to understand. |
 
 ---
 
@@ -72,8 +70,7 @@
 | **Title** | Make Impossible States Impossible |
 | **Description** | Design types so invalid states cannot be represented. Use discriminated unions to make each state explicit. |
 | **Example** | `type Request = { tag: 'loading' } \| { tag: 'success', data: User } \| { tag: 'error', error: string }` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Purple / Orange |
+|**Level** | Beginner |
 | **When to Apply** | Domain modeling, State machines |
 | **Learn More** | https://www.youtube.com/watch?v=IcgmSRJHu_8 |
 
@@ -96,7 +93,7 @@
 | **Title** | Exhaustiveness Checking |
 | **Description** | Compiler ensures all union cases are handled. Add new variant and compiler shows every place to update. |
 | **Example** | `switch(request.tag) { case 'loading': ... case 'success': ... }` Compiler will tell you that you forgot the 'error' case. Also, you don't need a `default` case. |
-| **Color** | Green (Beginner) |
+|**Level** | Beginner |
 | **Edge Color** | Purple / Orange |
 | **When to Apply** | Domain modeling, State machines |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking |
@@ -119,9 +116,8 @@
 |-------|---------|
 | **Title** | Result Types |
 | **Description** | Return success or failure explicitly in the type. Caller must handle both cases. |
-| **Example** | `function getUser(id: string): Result<User, NotFoundError>` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Blue / Teal |
+| **Example** | `function readFile(fileName: string): Result<File, NotFound \| NoPermission>` |
+|**Level** | Beginner |
 | **When to Apply** | Boundaries/I/O, API design |
 | **Learn More** | https://github.com/supermacro/neverthrow |
 
@@ -143,9 +139,8 @@
 |-------|---------|
 | **Title** | Branded Types |
 | **Description** | Distinguish semantically different values that share the same primitive type. |
-| **Example** | `type UserId = string & { _brand: 'UserId' }` and `type ProductId = string & { _brand: 'ProductId' }` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple |
+| **Example** | `type UserID = string & { brand: 'UserID' }` and `type ProductID = string & { brand: 'ProductID' }` then create a value `const UserID = '123' as UserId` |
+|**Level** | Intermediate |
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://egghead.io/blog/using-branded-types-in-typescript |
 
@@ -153,9 +148,9 @@
 
 | Field | Content |
 |-------|---------|
-| **Title** | Primitive Mixups |
+| **Title** | Primitive Obsession |
 | **Description** | Accidentally passing one ID where another is expected. Compiler can't distinguish between two `string` values. |
-| **Example** | Accidentally passing a `productId` to `getProduct(userId)` compiles fine but fails at runtime — both are just `string` |
+| **Example** | Accidentally passing a `userID` to `getProduct(userID)` compiles fine but fails at runtime — both are just `string` |
 
 ---
 
@@ -168,8 +163,7 @@
 | **Title** | Opaque Types |
 | **Description** | Hide internal representation, force construction through validated factory function. |
 | **Example** | `type ValidEmail = ...` (internal) with only `createEmail(s: string): ValidEmail \| undefined` exported |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple / Pink |
+|**Level** | Intermediate |
 | **When to Apply** | Domain modeling, Module-level |
 | **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
 
@@ -183,30 +177,6 @@
 
 ---
 
-## Card 8
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Refinement Types |
-| **Description** | Narrow primitives to constrained subsets with semantic meaning. |
-| **Example** | `type PositiveNumber = number & { _brand: 'positive' }` with smart constructor. Now `function divide(a: number, b: PositiveNumber):number` won't give you back `Infinity` because you can no longer divide by zero. |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple / Cyan |
-| **When to Apply** | Domain modeling, Value-level |
-| **Learn More** | https://zod.dev/?id=refine |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Primitive Obsession |
-| **Description** | Using raw primitives when only a subset of values is valid, requiring defensive checks everywhere. |
-| **Example** | `function divide(a: number, b: number):number` — must check `b !== 0` inside, caller can pass anything, as well if result is `NaN` or `Infinity/-Infinity`. |
-
----
-
 ## Card 9
 
 ### FRONT (Solution)
@@ -216,8 +186,7 @@
 | **Title** | NonEmpty Collections |
 | **Description** | Type that guarantees at least one element exists in an Array. |
 | **Example** | `type NonEmptyArray<T> = [T, ...T[]]` or `type AtLeast1Item<T> = { first: T, rest: T[] }` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple |
+|**Level** | Intermediate |
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html |
 
@@ -240,8 +209,7 @@
 | **Title** | Total Functions |
 | **Description** | Function that returns a value for every possible input. No exceptions, no undefined behavior. |
 | **Example** | `divide(a: number, b: PositiveNumber): number` — impossible to pass zero |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Gray |
+|**Level** | Intermediate |
 | **When to Apply** | Function-level |
 | **Learn More** | https://wiki.haskell.org/Partial_functions |
 
@@ -264,10 +232,9 @@
 | **Title** | Smart Constructors |
 | **Description** | Factory functions that validate and return `Result` or `Option` instead of throwing. |
 | **Example** | `const email = Email.create(input) // Result<Email, InvalidEmailError>` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple |
+|**Level** | Intermediate |
 | **When to Apply** | Domain modeling |
-| **Learn More** | https://wiki.haskell.org/Smart_constructors (TODO/FIXME: need different link) |
+| **Learn More** | https://dev.to/gcanti/functional-design-smart-constructors-14nb |
 
 ### BACK (Problem)
 
@@ -276,30 +243,6 @@
 | **Title** | Constructor Exceptions |
 | **Description** | Constructors that throw on invalid input — caller doesn't know from type signature that it can fail. |
 | **Example** | `new Email("invalid")` throws — but `new Email(input)` looks safe in the code |
-
----
-
-## Card 12
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Phantom Types |
-| **Description** | Type parameters that exist only at compile time to track state or constraints. Zero runtime cost. |
-| **Example** | `type Email<State> = { value: string }` — `Email<Validated>` vs `Email<Unvalidated>` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Orange |
-| **When to Apply** | State machines |
-| **Learn More** | https://dev.to/busypeoples/notes-on-typescript-phantom-types-kg9 |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Runtime State Checks |
-| **Description** | Manually tracking state with booleans or flags, requiring `if (isValidated)` checks scattered throughout code. |
-| **Example** | `if (email.isValidated) { sendEmail(email) }` — easy to forget the check |
 
 ---
 
@@ -312,9 +255,8 @@
 | **Title** | Anti-Corruption Layer |
 | **Description** | Translate external/legacy types into your domain types at the boundary. Keep external shapes outside. |
 | **Example** | `const user = toUser(apiResponse)` — API shape stays at edge, domain shape inside |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Blue / Brown |
-| **When to Apply** | Boundaries/I/O, System-level |
+|**Level** | Advanced |
+| **When to Apply** | Boundaries/IO, System-level |
 | **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
 
 ### BACK (Problem)
@@ -323,33 +265,30 @@
 |-------|---------|
 | **Title** | Leaky Abstractions |
 | **Description** | External API shapes spreading through codebase, coupling your domain to third-party structures. Also leads to Shotgun Parsing. |
-| **Example** | `function processUser(user: APIYouDontOwnResponse)` used deep in business logic — API changes, everything breaks. Their messy data makes your code messy. Data in Python snake case (e.g. `first_name`)? Now used in your `cameCase` code base making it harder to read. TODO/FIXME: I've seen some gnarly code, find it. |
+| **Example** | `function processUser(user: APIYouDontOwnResponse)` used deep in business logic — API changes, everything breaks. Their messy data makes your code messy. Data in Python snake case (e.g. `first_name`)? Now used in your `cameCase` code base making it harder to read. |
 
 ---
 
 ## Card 14
 
---- TODO/FIXME: Use the Elm version for UI development instead of this Rust one.
-
 ### FRONT (Solution)
 
 | Field | Content |
 |-------|---------|
-| **Title** | Type-Safe Builder |
-| **Description** | Use phantom types to enforce required steps in builder pattern at compile time. |
-| **Example** | `RequestBuilder<{ url: Set, method: Unset }>` — `.build()` only available when all required fields set |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Teal |
-| **When to Apply** | API design |
-| **Learn More** | https://blog.rust-lang.org/2015/05/11/traits.html#the-builder-pattern |
+| **Title** | Pipeline Builder |
+| **Description** | Pattern to build a function for processing some data using a series of piped functions. |
+| **Example** | ```Success().concat(isPasswordLongEnough(password)).concat(isPasswordStrongEnough(password)).map(_ => password);``` returns `Success(password)` if it's valid or `Failure([validation failures here])` |
+|**Level** | Advanced |
+| **When to Apply** | Decoders, Validation |
+| **Learn More** | https://sporto.github.io/elm-patterns/advanced/pipeline-builder.html |
 
 ### BACK (Problem)
 
 | Field | Content |
 |-------|---------|
-| **Title** | Runtime Builder Errors |
-| **Description** | Forgetting required fields in builder pattern, discovered only when `.build()` throws at runtime. |
-| **Example** | `new RequestBuilder().setHeaders({...}).build()` — forgot URL, throws "URL is required" |
+| **Title** | Fast-Fail Validation Chains |
+| **Description** | Imperative or monadic validation often stops at the first failure, so users only see one error at a time. |
+| **Example** | `if (!name) return Left('name'); if (!email) return Left('email');` — only the first error is returned. |
 
 ---
 
@@ -362,10 +301,9 @@
 | **Title** | Typestate |
 | **Description** | Encode lifecycle states in types so only valid transitions are possible at compile time. |
 | **Example** | `type Draft = { tag: 'Draft' }; type Submitted = { tag: 'Submitted' }; function submit(d: Draft): Submitted` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Orange |
+|**Level** | Intermediate |
 | **When to Apply** | State machines |
-| **Learn More** | https://en.wikipedia.org/wiki/Typestate_analysis |
+| **Learn More** | https://sporto.github.io/elm-patterns/advanced/flow-phantom-types.html |
 
 ### BACK (Problem)
 
@@ -403,17 +341,13 @@
         <pre><code class="language-typescript">type USD = { readonly _unit: "USD" };
 type EUR = { readonly _unit: "EUR" };
 
-type Money&lt;C&gt; = {
-  amount: number;
-  currency: C;
-};
+type Money&lt;C&gt; = { amount: number; currency: C; };
 
 function add&lt;C&gt;(a: Money&lt;C&gt;, b: Money&lt;C&gt;): Money&lt;C&gt; {
   return { amount: a.amount + b.amount, currency: a.currency };
 }
 
 const usd1: Money&lt;USD&gt; = { amount: 10, currency: { _unit: "USD" } };
-const usd2: Money&lt;USD&gt; = { amount: 5, currency: { _unit: "USD" } };
 const eur1: Money&lt;EUR&gt; = { amount: 7, currency: { _unit: "EUR" } };
 
 add(usd1, usd2); // ok
@@ -421,12 +355,8 @@ add(usd1, usd2); // ok
       </td>
     </tr>
     <tr>
-      <td><strong>Color</strong></td>
-      <td>Red (Advanced)</td>
-    </tr>
-    <tr>
-      <td><strong>Edge Color</strong></td>
-      <td>Purple / Cyan</td>
+      <td><strong>Level</strong></td>
+      <td>Advanced</td>
     </tr>
     <tr>
       <td><strong>When to Apply</strong></td>
@@ -494,12 +424,8 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
       </td>
     </tr>
     <tr>
-      <td><strong>Color</strong></td>
-      <td>Yellow (Intermediate)</td>
-    </tr>
-    <tr>
-      <td><strong>Edge Color</strong></td>
-      <td>Cyan</td>
+      <td><strong>Level</strong></td>
+      <td>Intermediate</td>
     </tr>
     <tr>
       <td><strong>When to Apply</strong></td>
@@ -533,12 +459,9 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Capability-Based Design |
 | **Description** | Pass explicit capabilities (permissions/operations) into functions instead of relying on ambient global authority. |
 | **Example** | `function registerUser(sendEmail: SendEmail, user: User)` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Brown / Teal |
+|**Level** | Advanced |
 | **When to Apply** | System-level, API design |
-| **Learn More** | https://en.wikipedia.org/wiki/Object-capability_model |
-
---- TODO/FIXME: This one is tough to show problems; half is readability, the other half is too many dependencies to higher level functions.
+| **Learn More** | https://fsharpforfunandprofit.com/posts/dependencies-3/ |
 
 ### BACK (Problem)
 
@@ -546,8 +469,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 |-------|---------|
 | **Title** | Ambient Authority |
 | **Description** | Code can perform hidden side effects because it can reach global DB/fs/network clients directly. You can also require a lot of dependencies to child functions through Dependency Injection. |
-| **Example** | A function that should only email users also mutates billing records |
-
+| **Example** | A function that should only email users also mutates billing records. Also `function getUsers(fetch)` now requires all fucntions that use `getUsers` to also supply `fetch` in their dependencies, even if they don't ever actually use the `fetch`. |
 
 ---
 
@@ -560,12 +482,11 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Effect Typing (Function Coloring) |
 | **Description** | Make effects explicit in signatures (`Async`, `IO`, `DB`, `Network`) so effectful code is visible, composable, and can reduce unit testing using spies. |
 | **Example** | `type TaskResult<A, E> = () => Promise<{ tag: 'Ok', value: A } \| { tag: 'Err', error: E }>` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Gray / Teal |
+|**Level** | Advanced |
 | **When to Apply** | Function-level, API design |
 | **When NOT to Apply** | Tiny scripts where effect boundaries are obvious and short-lived. |
 | **Runtime Pair** | Structured effect wrappers (`Task`, `ReaderTaskEither`, service interfaces). |
-| **Learn More** | https://en.wikipedia.org/wiki/Effect_system |
+| **Learn More** | https://lackofimagination.org/2025/11/managing-side-effects-a-javascript-effect-system-in-30-lines-or-less/ |
 
 ### BACK (Problem)
 
@@ -574,33 +495,6 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Hidden Effects / Function Coloring |
 | **Description** | A function starts pure, then calls async/IO code, and effect requirements leak upward unexpectedly. |
 | **Example** | `getDisplayName()` becomes `async getDisplayName()` after one Promise call |
-
---- TODO/FIXME: Need the unit testing of logs here.
----
-
-## Card 20
-
-### FRONT (Solution)
-
---- TODO/FIXME: Folktale has a great Validation accumulator for this
-
-| Field | Content |
-|-------|---------|
-| **Title** | Validation vs Computation Split |
-| **Description** | Use accumulating validation for input errors, then use fail-fast `Result` for domain workflows. |
-| **Example** | `SignupSchema.safeParse(raw)` for field errors, then `createUser(parsed.data): Result<User, DomainError>` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Blue / Gray |
-| **When to Apply** | Boundaries/I/O, Function-level |
-| **Learn More** | https://fsharpforfunandprofit.com/posts/recipe-part2/ |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Conflated Error Handling |
-| **Description** | Same mechanism handles user input issues and domain failures, causing poor UX and confusing control flow. |
-| **Example** | Form submit returns only first validation error and hides the rest |
 
 ---
 
@@ -613,9 +507,9 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Error Algebra "Errors as Values" |
 | **Description** | Model domain errors as discriminated unions with explicit recovery meaning (retry, fix input, escalate, abort). |
 | **Example** | `type CheckoutError = { tag: 'CardDeclined' } \| { tag: 'InventoryChanged' } \| { tag: 'TransientNetwork'; retryAfterMs: number }` |
-| **Color** | Yellow (Intermediate) |
+|**Level** | Intermediate |
 | **Edge Color** | Teal / Brown |
-| **When to Apply** | API design, System-level |
+| **When to Apply** | API design, System-level, Discriminated Unions |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
 ### BACK (Problem)
@@ -637,8 +531,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Schema/Codec Single Source of Truth |
 | **Description** | Define runtime schema once and derive parser, encoder, and static types from it to avoid drift. |
 | **Example** | `const UserSchema = z.object({ id: z.string(), email: z.string().email() }); type User = z.infer<typeof UserSchema>` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Blue / Pink |
+|**Level** | Beginner |
 | **When to Apply** | Boundaries/I/O, Module-level |
 | **Learn More** | https://zod.dev/ |
 
@@ -652,30 +545,6 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 
 ---
 
-## Card 23
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Lawful Abstractions |
-| **Description** | Use abstractions with algebraic laws so composition is predictable and refactors are safer. |
-| **Example** | `map(id, x) === x` and `map(f, map(g, x)) === map(x => f(g(x)), x)` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Gray |
-| **When to Apply** | Function-level |
-| **Learn More** | https://wiki.haskell.org/Typeclassopedia |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Unreliable Composition |
-| **Description** | Custom abstractions behave inconsistently, so combining operations introduces surprising behavior. |
-| **Example** | A custom `map` mutates data or drops elements |
-
----
-
 ## Card 24
 
 ### FRONT (Solution)
@@ -685,8 +554,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Property-Based Testing from Types |
 | **Description** | Generate many test cases from typed generators and assert invariants instead of relying only on hand-picked examples. |
 | **Example** | `fc.assert(fc.property(arbUser, u => deepEqual(decode(encode(u)), u)))` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Gray / Purple |
+|**Level** | Intermediate |
 | **When to Apply** | Function-level, Domain modeling |
 | **Learn More** | https://fast-check.dev/ |
 
@@ -700,75 +568,6 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 
 ---
 
-## Card 25
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Temporal Modeling Types |
-| **Description** | Distinguish machine instants, calendar dates, and zoned local times with separate types. |
-| **Example** | `Temporal.Instant` vs `Temporal.PlainDate` vs `Temporal.ZonedDateTime` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple / Blue |
-| **When to Apply** | Domain modeling, Boundaries/I/O |
-| **Learn More** | https://tc39.es/proposal-temporal/docs/ |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Timezone Ambiguity |
-| **Description** | Treating all date/time values as the same type causes off-by-hours/day bugs across locales. |
-| **Example** | Storing `"2026-03-10 09:00"` without timezone and sending at wrong local time |
-
----
-
-## Card 26
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Versioned Domain Types |
-| **Description** | Represent schema/domain versions explicitly and migrate with typed translators instead of ad-hoc conditionals. |
-| **Example** | `type UserEvent = UserCreatedV1 \| UserCreatedV2; function toV2(v1: UserCreatedV1): UserCreatedV2` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Blue / Brown |
-| **When to Apply** | Boundaries/I/O, System-level |
-| **Learn More** | https://martinfowler.com/bliki/ParallelChange.html |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Version Drift |
-| **Description** | Old and new payloads are handled inconsistently across services, causing brittle compatibility logic. |
-| **Example** | `if (payload.version === 1) ... else ...` duplicated in many modules |
-
----
-
-## Card 27
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Compiler Strictness as Practice |
-| **Description** | Treat strict compiler flags as design constraints so weak assumptions are rejected early. |
-| **Example** | `\"strict\": true, \"noUncheckedIndexedAccess\": true, \"exactOptionalPropertyTypes\": true` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Pink / Gray |
-| **When to Apply** | Module-level, Function-level |
-| **Learn More** | https://www.typescriptlang.org/tsconfig#strict |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Silent Unsoundness |
-| **Description** | Looser compiler settings allow unsafe assumptions that surface later as runtime bugs. |
-| **Example** | `users[id].name` compiles, but `users[id]` can be `undefined` |
 ## Card 28
 
 ### FRONT (Solution)
@@ -778,11 +577,10 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Option / Maybe Type |
 | **Description** | Represent absence explicitly with `Some`/`None` instead of `null` or `undefined`. |
 | **Example** | `type Option<T> = { tag: 'Some', value: T } \| { tag: 'None' }` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Purple / Gray |
+|**Level** | Beginner |
 | **When to Apply** | Domain modeling, Function-level |
 | **When NOT to Apply** | When absence needs rich failure context; use `Result` for error details. |
-| **Runtime Pair** | Helpers like `map`, `flatMap`, `getOrElse` to avoid null checks. |
+| **Runtime Pair** | Helpers like `map` and `getWithDefault` to avoid null checks. |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/Option.ts.html |
 
 ### BACK (Problem)
@@ -804,7 +602,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Product Types (Records) |
 | **Description** | Model data that must exist together with named fields (`AND` composition). |
 | **Example** | `type Money = { amount: number, currency: Currency }` |
-| **Color** | Green (Beginner) |
+|**Level** | Beginner |
 | **Edge Color** | Purple |
 | **When to Apply** | Domain modeling |
 | **When NOT to Apply** | When values are alternatives, not combinations; use unions for `OR` cases. |
@@ -830,8 +628,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Unknown at Boundaries |
 | **Description** | Accept external input as `unknown`, then parse/narrow once into trusted domain types. |
 | **Example** | `function parseUser(input: unknown): Result<User, ParseError>` |
-| **Color** | Green (Beginner) |
-| **Edge Color** | Blue |
+|**Level** | Beginner |
 | **When to Apply** | Boundaries/I/O |
 | **When NOT to Apply** | Internal code paths where values are already trusted domain types. |
 | **Runtime Pair** | Schema validators/codecs (Zod, io-ts, valibot). |
@@ -847,32 +644,6 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 
 ---
 
-## Card 31
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Type Predicates and Assertion Functions |
-| **Description** | Centralize narrowing logic in reusable guards so callers gain precise types after checks. |
-| **Example** | `function isEmail(x: unknown): x is Email { ... }` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Gray |
-| **When to Apply** | Function-level |
-| **When NOT to Apply** | If a schema parser already does full validation at boundary. |
-| **Runtime Pair** | Shared guard/assert modules plus exhaustive unit tests for guards. |
-| **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Ad-Hoc Narrowing |
-| **Description** | Inline checks diverge over time, yielding inconsistent behavior and weak inferred types. |
-| **Example** | Three different `isUser` checks in three files with different required fields |
-
----
-
 ## Card 32
 
 ### FRONT (Solution)
@@ -882,8 +653,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Readonly by Default |
 | **Description** | Prefer immutable shapes so mutation is explicit and local, reducing aliasing bugs. |
 | **Example** | `type User = { readonly id: UserId, readonly email: Email }` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Pink / Gray |
+|**Level** | Intermediate |
 | **When to Apply** | Module-level, Function-level |
 | **When NOT to Apply** | Hot paths where copying costs dominate and mutability is intentionally encapsulated. |
 | **Runtime Pair** | Copy-on-write updates and immutable helpers. |
@@ -899,110 +669,6 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 
 ---
 
-## Card 33
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Type-Level Tests |
-| **Description** | Add compile-time tests that lock API type behavior (`inference`, `assignability`, `errors`). |
-| **Example** | `expectType<UserId>(createUserId("u_123"))` and `// @ts-expect-error createUserId(123)` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Pink / Teal |
-| **When to Apply** | Module-level, API design |
-| **When NOT to Apply** | Throwaway prototypes where API stability is not a goal. |
-| **Runtime Pair** | `tsd`, `dtslint`, or `vitest` + `expectTypeOf`. |
-| **Learn More** | https://github.com/SamVerschueren/tsd |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Silent Type Regressions |
-| **Description** | Refactors preserve runtime behavior but accidentally widen or break type contracts. |
-| **Example** | A helper returns `string` instead of `UserId`, and misuse spreads |
-
----
-
-## Card 34
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Nominal Type Toolbox |
-| **Description** | Use a progression: `Branded` for distinction, `Opaque` for encapsulation, `Refinement` for constraints, `Phantom` for state/index tracking. |
-| **Example** | `UserId` (brand), `Email` (opaque + smart constructor), `NonZero` (refinement), `Order<Submitted>` (phantom) |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Purple / Pink / Orange / Cyan |
-| **When to Apply** | Domain modeling, Module-level, State machines, Value-level |
-| **When NOT to Apply** | When the domain does not justify extra type ceremony. |
-| **Runtime Pair** | Smart constructors and explicit conversion functions at boundaries. |
-| **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Nominal Modeling Confusion |
-| **Description** | Teams mix branding, opacity, and phantom techniques inconsistently, causing accidental complexity. |
-| **Example** | One module uses raw `string` IDs while another uses opaque IDs, forcing unsafe casts |
-
----
-
-## Card 35
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Boundary Type Stack |
-| **Description** | Treat boundaries as a stack: `Unknown -> Parse/Codec -> Domain Type -> Anti-Corruption Mapping`. |
-| **Example** | `rawJson (unknown) -> ApiUserSchema.parse -> ApiUser -> toDomainUser -> User` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Blue / Pink / Brown |
-| **When to Apply** | Boundaries/I/O, Module-level, System-level |
-| **When NOT to Apply** | Tiny apps with one trusted data source and minimal integration risk. |
-| **Runtime Pair** | Shared codec package plus boundary mappers per integration. |
-| **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Boundary Drift |
-| **Description** | External payloads, parser logic, and domain shapes drift independently and break in subtle ways. |
-| **Example** | API adds `middle_name`; parser accepts it, but domain mapper silently drops required semantics |
-
----
-
-## Card 36
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Typestate Builder |
-| **Description** | Merge builder ergonomics with typestate constraints so required steps are enforced before `build`. |
-| **Example** | `RequestBuilder<{ url: Set, method: Set, body: Optional }>.build()` |
-| **Color** | Red (Advanced) |
-| **Edge Color** | Orange / Teal |
-| **When to Apply** | State machines, API design |
-| **When NOT to Apply** | Simple constructors with few required fields. |
-| **Runtime Pair** | Minimal runtime assertions for cross-field invariants not expressible in types. |
-| **Learn More** | https://en.wikipedia.org/wiki/Typestate_analysis |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Runtime Builder Failures |
-| **Description** | Missing required steps are discovered only at runtime when `build()` throws. |
-| **Example** | `new RequestBuilder().setHeaders(h).build()` fails because URL was never set |
-
----
-
 ## Card 37
 
 ### FRONT (Solution)
@@ -1012,8 +678,7 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Title** | Railway-Oriented Programming |
 | **Description** | Compose `Result`/`Maybe` steps left-to-right; stop at first failure, continue on success. |
 | **Example** | `parse(input).andThen(validate).andThen(save).andThen(sendWelcomeEmail)` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Gray / Teal |
+|**Level** | Intermediate |
 | **When to Apply** | Function-level, API design |
 | **When NOT to Apply** | When you need all validation errors at once (not first-error wins). |
 | **Runtime Pair** | `neverthrow` `Result/ResultAsync` with `.andThen`, `.map`, `.mapErr`. |
@@ -1028,28 +693,3 @@ const speed = divideMetersBySeconds(distance, time);</code></pre>
 | **Example** | `if (ok1) { if (ok2) { try { ... } catch { ... } } else { ... } } else { ... }` |
 
 ---
-
-## Card 38
-
-### FRONT (Solution)
-
-| Field | Content |
-|-------|---------|
-| **Title** | Validation Pipeline (Error Accumulation) |
-| **Description** | Run independent validators and collect all failures, returning valid output only when all pass. |
-| **Example** | `Result.combineWithAllErrors([validateName(f.name), validateEmail(f.email), validatePassword(f.password)]).map(([name,email,password]) => ({ name, email, password }))` |
-| **Color** | Yellow (Intermediate) |
-| **Edge Color** | Blue / Gray |
-| **When to Apply** | Boundaries/I/O, Function-level |
-| **When NOT to Apply** | When later steps depend on earlier successful outputs; use Railway there. |
-| **Runtime Pair** | `ValidationError[]` + combinators like `combineWithAllErrors`. |
-| **Learn More** | https://github.com/supermacro/neverthrow |
-
-### BACK (Problem)
-
-| Field | Content |
-|-------|---------|
-| **Title** | First-Error-Only UX |
-| **Description** | Users fix one form error at a time because validation stops too early. |
-| **Example** | Submit shows `"Email invalid"`; after fix, next submit shows `"Password too short"`; repeat. |
-
