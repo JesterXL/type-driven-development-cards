@@ -423,7 +423,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | Pass explicit capabilities (permissions/operations) into functions instead of relying on ambient global authority. |
 | **Visual Metaphor** | Wow this one is tough... lemme just stream of conciousness and see what happens. In math, if you got 1 + 1 = 2 in your head, nothing happens when you see/hear "2". Like, you're still you, the world goes on. But if you do that on a calculator... something DOES happen; you see a "2" on the screen. Not "1 + 1", but just "2". The world has changed. If you now press "+ 1" on the calculator... you suddenly get "3". Both the screen changes, and you're understanding of "+ 1" because it's a different time. Math "always works", but the real world... with time... that's when things get real and we call that "Effects". Or rather "side-effects"; things that happen outside of the math. The messy, impossible to predict, real world. However, if we explicitly cite those capabilities, 2 cool things happen: First, you can have expectations ahead of time by reading it; "Ah, this will send an email... maybe, else it'll tell us why the email failed to send". Second, you know what it IS NOT doing; meaning all this does is send an email, it doesn't actually update their user profile, or change their hotel reservation time... or anything else dangerous. For example, I know when I go Backpacking in the woods, I don't just need "a hammock to sleep in". I'm in nature... it _could_ rain/snow, so I bring rain gear just in case. Everyone who rides a motorcycle in America (excluding Californians) ALWAYS checks their phone to know what the weather is. They could be 30 year experts at riding and mechanics so they know they can ride and the bike will work... but will it rain? Who knows, better check so I know if I need to bring/wear rain gear. Capability-Based Design means making those "random, dangerous real world things" apparent. e.g. "It could rain", "bring bear spray in case of bear", "bring cold food in case fire starter fails", "bring water in case no stream/lake for water filter". It's like how every building has a fire estinquisher, and in America at least, wayyyyyy too much parking "just in case everyone and their mom shows up". You make that explicit, know. Airplanes: "The emergency exits are here". I think a key point to this one compared to the "Effect Typing (Function Coloring)" one is that this is all about "the entire system". There are things inside the system happening we may not even see; we just want to be clear about it. The "Effect Typing" one is way more small and explicit; e.g. "This lightswitch also turns on the celing fan". |
 | **Example** | `function registerUser(sendEmail: SendEmail, user: User)` |
-|**Level** | Advanced |
+| **Level** | Advanced |
 | **When to Apply** | System-level, API design |
 | **Learn More** | https://fsharpforfunandprofit.com/posts/dependencies-3/ |
 
@@ -444,24 +444,22 @@ const speed = divideMetersBySeconds(distance, time);``` |
 
 | Field | Content |
 |-------|---------|
-| **Title** | Effect Typing (Function Coloring) |
-| **Description** | Make effects explicit in signatures (`Async`, `IO`, `DB`, `Network`) so effectful code is visible, composable, and can reduce unit testing using spies. |
-| **Visual Metaphor** | Like the "Capability-Based Design" but WAYY simpler; "btw, if you turn on this light switch, the fan will work". |
-| **Example** | `type TaskResult<A, E> = () => Promise<{ tag: 'Ok', value: A } \| { tag: 'Err', error: E }>` |
-|**Level** | Advanced |
-| **When to Apply** | Function-level, API design |
-| **When NOT to Apply** | Tiny scripts where effect boundaries are obvious and short-lived. |
-| **Runtime Pair** | Structured effect wrappers (`Task`, `ReaderTaskEither`, service interfaces). |
-| **Learn More** | https://lackofimagination.org/2025/11/managing-side-effects-a-javascript-effect-system-in-30-lines-or-less/ |
+| **Title** | Type Proofs (Assertion Functions) |
+| **Description** | Use `asserts` functions to prove runtime predicates to the type system, enabling refined types after checks and composed proofs. |
+| **Visual Metaphor** | When you do the math, show your work, and test that work. |
+| **Example** | `type OrderedPair = readonly [Lower, Upper]` and `function assertOrdered(p: readonly [number, number]): asserts p is OrderedPair { if (p[0] >= p[1]) throw new Error("Expected a < b") }` |
+| **When to Apply** | Value-level, Function-level, Domain modeling |
+| **Level** | Advanced |
+| **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#assertion-functions |
 
 ### BACK (Problem)
 
 | Field | Content |
 |-------|---------|
-| **Title** | Hidden Effects / Function Coloring |
-| **Description** | A function starts pure, then calls async/IO code, and effect requirements leak upward unexpectedly. |
-| **Visual Metaphor** | "I turned off the light switch... why did the fan turn off?" |
-| **Example** | `getDisplayName()` becomes `async getDisplayName()` after one Promise call |
+| **Title** | Unproven Invariants |
+| **Description** | Code assumes ordering or constraints that are only documented in comments, forcing unsafe casts and brittle logic. |
+| **Visual Metaphor** | The types aren't total. |
+| **Example** | A tuple is assumed sorted, but later code reorders it and breaks range checks. |
 
 ---
 
