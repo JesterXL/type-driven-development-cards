@@ -161,6 +161,7 @@
 | **Title** | Opaque Types |
 | **Description** | Hide internal representation, force construction through validated factory function. |
 | **Visual Metaphor** | If you buy a brand new motorcycle from a reputable brand & dealer, it will work. If you go to the Passport office, you'll get your 1 year passport in a day, or your 5 year in a couple weeks. The key here is you have to go to specific place, or use a specific methodology to get good quality or a well know reason why you can't (e.g. can't afford a new bike, forgot your drivers license at home for the passport office). Another angle is Notaries; you need to have some official sign a document, else it isn't official. You have to go to some government agency to get a marriage license to make it legit. You buy jewerely from a reputable brand to ensure you don't get fake stones. You could mine them yourself, but then you'd have to learn gem cutting and ... that has a high cost of failure. |
+| **Quote** | Saw a Kawasaki Ninja for $2k on AliExpress. |
 | **Example** | `type ValidEmail = ...` (internal) with only `createEmail(s: string): ValidEmail \| undefined` exported |
 |**Level** | Intermediate |
 | **When to Apply** | Domain modeling, Module-level |
@@ -185,7 +186,7 @@
 |-------|---------|
 | **Title** | NonEmpty Collections |
 | **Description** | Type that guarantees at least one element exists in an Array. |
-| **Visual Metaphor** | Her majesty will tell me when I go to the grocery store to buy her stuff; she'll send me a list. When I get the list, I notice we already have all the things she's asking me to buy. So I always end buying something for her ANYWAY because if she finds out I went out and didn't buy her something... that's no good. (Can't have an empty list, need to ensure always at least 1 item). Another example is when get invited to a friends/family's house for dinner. They say "You don't need to bring anything..." but her majesty and I bring something anyway, like at least 1 bottle of wine and some weird house warming gift. |
+| **Visual Metaphor** | Her majesty will tell me when I go to the grocery store to buy her stuff; she'll send me a list. When I get the list, I notice we already have all the things she's asking me to buy. So I always end buying something for her ANYWAY because if she finds out I went out and didn't buy her something... that's no good. (Can't have an empty list, need to ensure always at least 1 item). Another example is when get invited to a friends/family's house for dinner. They say "You don't need to bring anything..." but her majesty and I bring something anyway, like at least 1 bottle of wine and some weird house warming gift. Make hat upside down, needs magic wand near it, but no rabbit. |
 | **Example** | `type NonEmptyArray<T> = [T, ...T[]]` or `type AtLeast1Item<T> = { first: T, rest: T[] }` |
 |**Level** | Intermediate |
 | **When to Apply** | Domain modeling |
@@ -211,6 +212,7 @@
 | **Title** | Total Functions |
 | **Description** | Function that returns a value for every possible input. No exceptions, no undefined behavior. |
 | **Visual Metaphor** | You know how a Mac "always works" and a PC "sometimes works"? A lamen would look at both laptops and go "Yeah... they're computers..." but we know better. Need to put it to sleep, then open it again? Works. Need to print something? Works. Need wifi? Works. Tether to your phone? Works. Another would be "any" Honda. Cold? Hot? Starts up. Haven't changed oil in 20 years? Starts anyway. Crashed? Still driveable. Another example is the water filter; whether the bacterial rivers of North America, the virus ones in South America, or just a mud filled pond... you'll predictably always get fresh water. |
+| **Quote** | Any Honda: Cold? Hot? 50 years old? Starts anyway. |
 | **Example** | `divide(a: number, b: PositiveNumber): number` — impossible to pass zero |
 |**Level** | Intermediate |
 | **When to Apply** | Function-level |
@@ -223,6 +225,7 @@
 | **Title** | Partial Functions |
 | **Description** | Functions that throw or crash for some inputs, with hidden failure modes not visible in the type signature. |
 | **Visual Metaphor** | I always think of those fast food commercials / photos where they show this amazing burger, and people take a picture of the real thing and it's just NOT even remotely similiar. There's this vibe of "fake" or "exagerating your capabilities". Yes, in normal circumstances, Green Arrow could fight off most villians, but Darkseid? No, another level. You'd need someone like Superman to handle something of that maginitude; partial functions "work in most happy path scenarios", but they're lying about their capabilities. For example, divide says "Yo, I can divide for you" but if you give it a 0 it's all like "Here's Infinity"... like how is that even helpful? Going back to the Honda metaphor, or even Toyota, you buy a Toyata Tacoma, that thing will do everything and last forever. You buy a Cybertruck... I mean, yes, it'll get you from Point A to Point B, but he quality is meh, and it's capabilities ain't all that. It's billed as something rivaling a Ford 150, but... you'll end up breaking it. I'm not sure if "cheap imitation" is a good metaphor; partial functions run our digital world, no doubt, but ...not on airplane software, nor medical software, or _most_ rockets. You want to sure that thing always works or fails for all possible scenarios. Partial Functions don't, and once you learn about Total Functions, you suddenly realize all of those functions have been lying to you for years; not maleovent, mind you, but still not solid engineering by any stretch. |
+| **Quote** | I added a New Relic dimension and it crashed my whole application? |
 | **Example** | `function divide(a: number, b: number): number { return a / b }` — returns `Infinity` or `NaN` for edge cases. |
 
 ---
@@ -273,6 +276,7 @@
 | **Title** | Leaky Abstractions |
 | **Description** | External API shapes spreading through codebase, coupling your domain to third-party structures. Also leads to Shotgun Parsing. |
 | **Visual Metaphor** | Me in high school. I only liked some music or wore specific music shirts to fit in with a specific friend group. For example, I did like Alice and Chains and Pearl Jam, but... only liked Dinosaur Jr because this girl I liked raved about their albums. I... liked their music, but hated their singer. I only listened to Sonic Youth to annoy my parents. Another angle is the "jury rig" fix. For example, most modern vehicles (cars, motorcycles) have water that goes into the engine, then comes out carrying heat, the disapates that heat near the radiator, then goes back in cold again; this is how it keeps the engines cool. If that tube hits a rock or gets damnaged and starts leaking, most engines won't work without that heat disappation system. So what I've seen people do is use duct tape to quikly fix it. That is SUPER awesome for like an hour to the next car parts store... but not for weeks on end? Same for my sink; we have the handle on it break, so I added some super glue until I had time to go the hardware store. Except I forgot, and my daughter and wife here so ticked off it kept breaking. Not fixing things properly, and just jury rigging a fix leads to all kinds of other problems, ecspecially if you keep doing that like all over the car or house. |
+| **Quote** | Other system's types are like Kudzu. |
 | **Example** | `function processUser(user: APIYouDontOwnResponse)` used deep in business logic — API changes, everything breaks. Their messy data makes your code messy. Data in Python snake case (e.g. `first_name`)? Now used in your `cameCase` code base making it harder to read. |
 
 ---
@@ -286,6 +290,7 @@
 | **Title** | Pipeline Builder |
 | **Description** | Pattern to build a function for processing some data using a series of piped functions. |
 | **Visual Metaphor** | The Roman Aquaducts. I'm not even a history savaant, and even I know they are beyond amazing with all the ways to speed up and slow down the water/erosion/water quality. The ability to get "water from here to there" is what a good pipeline does, and leveraging that with types ensures it works. For example, the Romans would use a Settling Basic when the water went too fast and risked eroding or washing over the duct. This "pool" would stop the water, and then force it to pool and raise up to exit slowly. Types in pipeline programming help ensure "ah, you need to connect the settling basin to the fast duct" so you have a safe pipeline.  |
+| **Quote** | The Roman Aqueducts settling basins slow water to safe speed. Arcades cross rivers & gorges. Siphons deliver water on an incline. Connected they ensure the pipeline delivers water no matter the terrain. |
 | **Example** | ```Success().concat(isPasswordLongEnough(password)).concat(isPasswordStrongEnough(password)).map(_ => password);``` returns `Success(password)` if it's valid or `Failure([validation failures here])` |
 |**Level** | Advanced |
 | **When to Apply** | Decoders, Validation |
@@ -298,6 +303,7 @@
 | **Title** | Fast-Fail Validation Chains |
 | **Description** | Imperative or monadic validation often stops at the first failure, so users only see one error at a time. |
 | **Visual Metaphor** | The opposite; plastic pipes used in northern, frigid climates that burst when it gets too cold. I live in the South which is shielded from the extreme cold, but even my house occasionally can be affected by it; we have our AC / heater in the attik. When both run, it sheds water; that water goes into a pool, and a pump pushes it out of the house. When it gets below 12F/-11C for longer than a day, the rubber pipes can fresh, and your heater turns off to prevent flooding your house. You have to use a hair dryer to make it work again, or pile insulation on the pipes like I did. One weak link in the chain can make the entire system not work... and even then you don't know if anything else is affected. For example, one year I fixed the attic... then found out the pipe outside the house was frozen too! The ice was like 30ft tall in the pipe; we had to pour hot water on the bottom pipe outside to allow the water to fall out of the house pipe. Another example is the DMV (Depart of Motor Vehicles), I sure hope you don't have that in Poland. You go there, and are missing some stupid form, or filled out the wrong thing, you have to spend yet another 2 hours getting a new appointment or dealing with people who won't help you or are just rude/angry, and its' frustrating not knowing ahead of time the 13 wonky steps you're suppposed to magically know about. |
+| **Quote** | A chain is only as strong as its weakest link. If all links are weak, its not a strong chain. |
 | **Example** | `if (!name) return Left('name'); if (!email) return Left('email');` — only the first error is returned. |
 
 ---
@@ -311,6 +317,7 @@
 | **Title** | Typestate |
 | **Description** | Encode lifecycle states in types so only valid transitions are possible at compile time. |
 | **Visual Metaphor** | This would be instructions for a robot, like a Roomba. It's extremely clear what steps to do, when (e.g. if full power, and time to clean then go clean. If stuck, turn around. If not memorized floorplan, go do that. If dust bin full, go empty it and keep vacuuming if we have some battery. If out of battery or done, go back to home and recharge). All of those transitions are clear, and you can only go from 1 to the other in specific situations. A light switch is another; it's either on or off; each to transition. e.g. you can't go from "On to On"; it's very clear you "turn it on" meaning, "off to on" and "turn it off" meaning "on to off". Another example could be driving directions; you can't "turn left on I-84" unless you've made it to step 5 first, that kind of linear, clear step style of transition. |
+| **Quote** | The Roomba, if full power, will clean. If it is stuck, it will turn around. If it is low on power or has a full container, it will go to the charging station. |
 | **Example** | `type Draft = { tag: 'Draft' }; type Submitted = { tag: 'Submitted' }; function submit(d: Draft): Submitted` |
 |**Level** | Intermediate |
 | **When to Apply** | State machines |
@@ -375,6 +382,7 @@ add(usd1, usd2); // ok
 | **Title** | Units-of-Measure Types |
 | **Description** | Encode physical/business units in types to prevent invalid arithmetic across incompatible dimensions. |
 | **Visual Metaphor** | Same as currency. |
+| **Quote** | How much wood could a woodchuck chuck, if a woodchuck could chuck wood? |
 | **Example** | ```typescript
 // Branded unit types
 type Meters = number & { readonly _unit: "m" };
@@ -422,6 +430,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Capability-Based Design |
 | **Description** | Pass explicit capabilities (permissions/operations) into functions instead of relying on ambient global authority. |
 | **Visual Metaphor** | Wow this one is tough... lemme just stream of conciousness and see what happens. In math, if you got 1 + 1 = 2 in your head, nothing happens when you see/hear "2". Like, you're still you, the world goes on. But if you do that on a calculator... something DOES happen; you see a "2" on the screen. Not "1 + 1", but just "2". The world has changed. If you now press "+ 1" on the calculator... you suddenly get "3". Both the screen changes, and you're understanding of "+ 1" because it's a different time. Math "always works", but the real world... with time... that's when things get real and we call that "Effects". Or rather "side-effects"; things that happen outside of the math. The messy, impossible to predict, real world. However, if we explicitly cite those capabilities, 2 cool things happen: First, you can have expectations ahead of time by reading it; "Ah, this will send an email... maybe, else it'll tell us why the email failed to send". Second, you know what it IS NOT doing; meaning all this does is send an email, it doesn't actually update their user profile, or change their hotel reservation time... or anything else dangerous. For example, I know when I go Backpacking in the woods, I don't just need "a hammock to sleep in". I'm in nature... it _could_ rain/snow, so I bring rain gear just in case. Everyone who rides a motorcycle in America (excluding Californians) ALWAYS checks their phone to know what the weather is. They could be 30 year experts at riding and mechanics so they know they can ride and the bike will work... but will it rain? Who knows, better check so I know if I need to bring/wear rain gear. Capability-Based Design means making those "random, dangerous real world things" apparent. e.g. "It could rain", "bring bear spray in case of bear", "bring cold food in case fire starter fails", "bring water in case no stream/lake for water filter". It's like how every building has a fire estinquisher, and in America at least, wayyyyyy too much parking "just in case everyone and their mom shows up". You make that explicit, know. Airplanes: "The emergency exits are here". I think a key point to this one compared to the "Effect Typing (Function Coloring)" one is that this is all about "the entire system". There are things inside the system happening we may not even see; we just want to be clear about it. The "Effect Typing" one is way more small and explicit; e.g. "This lightswitch also turns on the celing fan". |
+| **Quote** | You get a glimpse at someone's wardrobe looking at the clothes drying on the clothesline. |
 | **Example** | `function registerUser(sendEmail: SendEmail, user: User)` |
 | **Level** | Advanced |
 | **When to Apply** | System-level, API design |
@@ -434,6 +443,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Ambient Authority |
 | **Description** | Code can perform hidden side effects because it can reach global DB/fs/network clients directly. You can also require a lot of dependencies to child functions through Dependency Injection. |
 | **Visual Metaphor** | There are 2 things here, but I wouldn't stress being able to visualize both. The first is you know how you turn on a light switch that "turns power on for the room"? You were expecting it to turn a light on, but suddenly a clock turns on, an fan starts spinning, and you hear a random beep. My favorite (not really) is when I used to travel for work; I'd get into some random hotel, turn on the bath tub, and my head would get blasted with water from the shower. I swear even in 2026 we still don't have a standard on how to switch "tub to shower head". You ever buy soda/a coke, get home, open it, and it explodes all over your kitchen because you didn't know it had been shaken on the ride home? It was supposed to be simple, but now you're cleaning up a disaster in the kitchen. Ok, so that's the first, the 2nd is more about layered dependencies. For example, we were going on an errand with my kids once, and the wife says "Bring a paper towel" and I'm like "uh... ok... why?" and she's like "for the dance" and I'm like "When I was a kid, we typically dressed up and danced, we didn't chow down on messy food and assume the school wouldn't provide napkins". The wife is like "wtf are you talking about, it's for the boy" and I'm like "The boy... what in the heck are you ... talking... about..." and she's like "Ssh, we have to whisper! Your daughter wants to impress the boy" and I'm like "oh you mean that one dude she likes?" and she's like "Ssh! Yes" and I'm like "so what does... a ... paper towel have to do with that" and she's like "for the lipstick, you dummy! She needs to blot it" and I'm like "geez, that was complicated... ok". Like I said, layers. It's clear to the wife, but to me I'm like "wait, there are levels here I need to understand...". |
+| **Quote** | Turned on a light switch and a fan started, a clock turned on, and something beeped. |
 | **Example** | A function that should only email users also mutates billing records. Also `function getUsers(fetch)` now requires all fucntions that use `getUsers` to also supply `fetch` in their dependencies, even if they don't ever actually use the `fetch`. |
 
 ---
@@ -447,6 +457,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Type Proofs (Assertion Functions) |
 | **Description** | Use `asserts` functions to prove runtime predicates to the type system, enabling refined types after checks and composed proofs. |
 | **Visual Metaphor** | When you do the math, show your work, and test that work. |
+| **Quote** | When you do the math, show your work, and test that work. |
 | **Example** | `type OrderedPair = readonly [Lower, Upper]` and `function assertOrdered(p: readonly [number, number]): asserts p is OrderedPair { if (p[0] >= p[1]) throw new Error("Expected a < b") }` |
 | **When to Apply** | Value-level, Function-level, Domain modeling |
 | **Level** | Advanced |
@@ -459,6 +470,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Unproven Invariants |
 | **Description** | Code assumes ordering or constraints that are only documented in comments, forcing unsafe casts and brittle logic. |
 | **Visual Metaphor** | The types aren't total. |
+| **Quote** | The types aren't total. |
 | **Example** | A tuple is assumed sorted, but later code reorders it and breaks range checks. |
 
 ---
@@ -472,6 +484,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Error Algebra "Errors as Values" |
 | **Description** | Model domain errors as discriminated unions with explicit recovery meaning (retry, fix input, escalate, abort). |
 | **Visual Metaphor** | People kind of ignore failure in programming, and just optmize for the happy path. When thigns break, they're like "oh, we'll we just look at the error, which doesn't happen much, fix it, deploy". As a UI developer... the cost here is the user is frustrated. Something didn't work. In back-end, you're pretty separated from the people that use your code, even if you talk to customers. In UI, they are clicking your button; it's intimate. So you care that much more because you're the one that has to deliver the bad news; all that work they put into a form "Sorry... but the guy I ask to proess this form... well, he exploded". So we take a hard stance. We say "Anything that can go wrong, let's explicitly talk about it." Once it's obvious, anything you're doing that's related to that thing that can go wrong ALSO has to handle it as well. You no longer hide the failings; you bring them into the light, and you unsure you handle every single one. This changes your worldview: 1, if something can go wrong, we think about it in 2 ways: "Does the user care?" or "Do we have no clue, and that's just life". The first, we think about naming them and how we can possibly recover. The second... well, those truly are the bad luck of life, but we know once they happen, we'll learn and make things better, all in the spirit of fighting for the user. We call it "algebra" because in the chaos that is code, having mathematical assuredness helps wrangle the chaos into predictable outcomes. It's a Klingon Warbird in an asteroid storm. Using that tool, you can forge something powerful amidst the maelstrom of "just ignore the bad things". Not sure if you're familiar with Planetscape, but they have this name for the plane of chaos, "Limbo". It's a infinite soup of matter and the more will you have, the more ability you have to force that will on the chaos and "build" things. Everything from a bubble of air you can live in to an entire city with orante buildings... all from your mind. This is what it means to "use Alegbra predictability to look for failures, bring them to the light, and handle when they occur". |
+| **Quote** | We know what is wrong, how to handle it, and some things we an try to remedy. |
 | **Example** | `type CheckoutError = { tag: 'CardDeclined' } \| { tag: 'InventoryChanged' } \| { tag: 'TransientNetwork'; retryAfterMs: number }` |
 |**Level** | Intermediate |
 | **Edge Color** | Teal / Brown |
@@ -522,7 +535,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 |-------|---------|
 | **Title** | Property-Based Testing from Types |
 | **Description** | Generate many test cases from typed generators and assert invariants instead of relying only on hand-picked examples. |
-| **Visual Metaphor** | Like the Total Functions, but a way to PROVE they handle all possible situations. Kind of like those brutal Japanese quality engineers you see in lab coats. Even a "Honda" or "Toyota"; they STILL use a Kanban style to be brutal on quality, THEN iterate to make it better. Fortnine has a good Kanban style. Property tests will actually generate a bunch of random inputs, then run the same test with those 100 random inputs. An example; You know that 99 beers on the wall song? A QA Engineer walks into a bar. He orders a beer. Orders 0 beers. Orders 99999999999 beers. Orders a lizard. Orders -1 beers. Orders a ueicbksjdhd. |
+| **Visual Metaphor** | Like the Total Functions, but a way to PROVE they handle all possible situations. Kind of like those brutal Japanese quality engineers you see in lab coats. Even a "Honda" or "Toyota"; they STILL use a Kanban style to be brutal on quality, THEN iterate to make it better. Fortnine has a good Kanban style. Property tests will actually generate a bunch of random inputs, then run the same test with those 100 random inputs. An example; You know that 99 beers on the wall song? A QA Engineer walks into a bar. He orders a beer. Orders 0 beers. Orders 99999999999 beers. Orders a lizard. Orders -1 beers. Orders a ueicbksjdhd. 
 | **Example** | `fc.assert(fc.property(arbUser, u => deepEqual(decode(encode(u)), u)))` |
 |**Level** | Intermediate |
 | **When to Apply** | Function-level, Domain modeling |
@@ -535,6 +548,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Example Blind Spots |
 | **Description** | Small example-based tests miss edge cases that violate invariants in production. |
 | **Visual Metaphor** | Like the "divide by 0", you can miss things. The type "says" number, but that could be not a real number like 0 / 0, or 12 / 0 which is infinity... rather than just remember that, it's easier to use property tests to find all these edge cases you didn't think about. "My house has 12 doors... did I lock them all?" or that one time Deadpool was fighting 12 army dudes and he's like "Oh god... did I leave the oven on!?" |
+| **Quote** | Deadpool: "Shoot... did I leave the stove on?" |
 | **Example** | Tests pass for ASCII names but fail for Unicode input |
 
 ---
@@ -562,7 +576,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Null Pointer Branching |
 | **Description** | `null`/`undefined` checks spread across code and are easy to forget in one branch. |
 | **Visual Metaphor** | Imagine meeting someone with no name. That would make your head explode. That only works with that dude in Game of Thrones. I say computers have `null` and make it explode, but some languages will have some people actively check for it first; e.g. "If this isn't null, then keep doing more code". This, however, makes your entire code base gross because you're constantly paranoid that at any point, your data is foobarred. Image taking a walk to the park, but you are all paranoid it might snow, rain, or lava or asteroids from the sky... then while walking, you have your shotgun all looking around in case wolves jump out at you... then ensuring you have enough money for the ice cream truck, which doesn't usually come today... like that's no way to live, man. I listened to an AI YouTube once that I think was a cut up lecture from Richard Feynman that said "Actually, nothing doesn't actually exist" which ... is quite amazing from a philosophical stand point, but in programming & math it most certainly does, and we're forced to handle it. When we ignore it, things explode/go boom in computer land. |
-| **Example** | `user.address.city` throws when `address` is `undefined` |
+| **Quote** | Agent Smith "What good is a phone call if you are unable to speak?" |
+| **Example** | `user.address.city` throws when `address` is `undefined` // forgot to chek in this branch 💥 // could use user?.address?.city // but then someone else // deals with the null  |
 
 ---
 
@@ -657,6 +672,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Title** | Railway-Oriented Programming |
 | **Description** | Compose `Result`/`Maybe` steps left-to-right; stop at first failure, continue on success. |
 | **Visual Metaphor** | This one is actually easy (but if you don't like the default, no worries). There are 2 tracks; green and red. There is a branch that's red going to a separate track in parallel. There tends to be multiple of these; 3, 7, whatever. The point is, if everything is going well, you stay on the green track and at each turn to the red track, you just keep going. If something at any of the branch points goes wrong, you just go on the red track. There's no way to from the red track back to the green track. You'll often see this visualization going vertically (because that's how programmers think), but horizontal is fine too or diagonal; it doesn't matter, just that once you're on the the red, there is no going back. Unlike pipeline, there are 2 tracks. It has a ton in common with pipeline; in fact, it's based on it. However, pipes, if something is wrong, or you have a bunch of information; you have to keep shuttling that along in the pipes. Railyway is nice because you can have 2 outcomes; success or failure, valid or invalida, something or nothing, etc. ... now, TECHNICALLY you can go back from Red to Green in certain, common conditions, but to get the basics, most people start with "if something's wrong, go on the red track and stay there". If you look up Scott Wlaschin and his railyway, he has some good visualizations. |
+| **Quote** | Expect the worst, hope for the best. |
 | **Example** | `parse(input).andThen(validate).andThen(save).andThen(sendWelcomeEmail)` |
 |**Level** | Intermediate |
 | **When to Apply** | Function-level, API design |

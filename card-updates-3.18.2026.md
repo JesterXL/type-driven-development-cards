@@ -60,7 +60,6 @@ user?.address?.city
 // deals with the null
 ```
 
-
 - Card 25
 	- Railway-Oriented Programming
 		- Quote
