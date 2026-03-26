@@ -15,6 +15,8 @@
 | **Level** | Beginner |
 | **When to Apply** | Boundaries/IO |
 | **Learn More** | https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/ |
+<img src="images/card1-front.png" />
+<img src="images/card1-frontb.png" />
 
 ### BACK (Problem)
 
@@ -24,7 +26,7 @@
 | **Description** | Validation logic scattered throughout codebase, checking the same fields repeatedly in different places, only checking the fields a function/method needs, inconsistent handling of invalid data. |
 | **Visual Metaphor** | Paranoid. Many parts could look good yet 1 part could be broken. When something is "off", you don't verify anything else, just rejection. One wrong piece of data, and boom, entire program crashes. Every single step is this terrifying, check each section before you walk. Like walking on a thinly frozen lake or one of those rickety rope bridges in Indian Jones and The Temple of Doom. |
 | **Example** | `if (json.name && typeof json.name !== 'string') { throw new Error('Name is needs to be a string') }` repeated in 5 different files. What about `json.email` or other fields? At any point of the code, bad data on just 1 field can crash the application. |
-
+<img src="images/card1-back.png" />
 ---
 
 ## Card 2
@@ -41,6 +43,8 @@
 | **When to Apply** | Domain modeling, State Machines |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
+<img src="images/card2-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -50,6 +54,7 @@
 | **Visual Metaphor** | Like a sticky note you left for yourself, but it's vague or doesn't describe exacly why you left the note. Like "Remember to do the thing"... what thing? Missing context. You call FedEx/UPS "Did you ship my package?" "No". "Uh... ok, what's the status of it? Waiting for label... waiting for pickup... shipped... in customs... in cross dock... in a plane... on truck... at my doorstep???" "No" "Dude, that's not helpful... what does 'no' mean?" |
 | **Example** | `process(true, {}, undefined)` — caller must remember what `true` means, often having to read the function/method contents to understand. |
 
+<img src="images/card2-back.png" />
 ---
 
 ## Card 3
@@ -66,6 +71,8 @@
 | **When to Apply** | Domain modeling, State machines |
 | **Learn More** | https://www.youtube.com/watch?v=IcgmSRJHu_8 |
 
+<img src="images/card3-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -74,6 +81,8 @@
 | **Description** | Optional fields with implicit relationships where certain combinations are meaningless or contradictory. |
 | **Visual Metaphor** | Imagine getting an empty box from FedEx, "Yes, I got my pacakge, but... the box didn't have the clothes I ordered inside it?" In America, they have these hexagon red signs that say "STOP". If they were green, but still said "STOP", Americans would probably crash into each other. In America, we have stop lights that go from red (stop), yellow (prepare to stop), and green (go). If it was red and green at the same time... I'd have no idea what to do. I'd probably try to go, but... only if others were stopped maybe? |
 | **Example** | `type Request = { loading: boolean, data?: User, error?: string }` — what does `{ loading: true, data: someUser, error: "failed" }` mean? |
+
+<img src="images/card3-back.png" />
 
 ---
 

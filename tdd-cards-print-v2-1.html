@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TDD Cards — Print Ready v2</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#2a2a2a;font-family:'IM Fell English',Georgia,serif;padding:40px 20px}
+h1{color:#c9a227;font-family:'Cinzel',serif;text-align:center;margin-bottom:6px;font-size:22px;letter-spacing:2px}
+.subtitle{color:#888;text-align:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;margin-bottom:32px}
+.pair-label{color:#c9a227;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;text-align:center;margin:32px 0 10px;text-transform:uppercase;opacity:.7}
+.card-pair{display:flex;gap:32px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+
+/* Card shell — tarot ratio 2.75×4.75 */
+.card{width:275px;height:475px;border-radius:12px;position:relative;font-family:'IM Fell English',Georgia,serif;overflow:hidden;display:flex;flex-direction:column;flex-shrink:0}
+.card.good{box-shadow:0 4px 20px rgba(0,0,0,.3),0 0 0 2px #8B6914,0 0 0 4px #1a0e00,0 0 0 6px #c9a227;background:#f5e9c8;color:#2a1a04}
+.card.bad{box-shadow:0 4px 20px rgba(0,0,0,.35),0 0 0 2px #7a1a1a,0 0 0 4px #0e0404,0 0 0 6px #b02020;background:#f0e4d0;color:#2a0a0a}
+
+/* Header */
+.card-header{padding:9px 11px 8px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;position:relative}
+.good .card-header{background:linear-gradient(180deg,#182e0e 0%,#2a5018 60%,#3a6824 100%);border-bottom:3px solid #8B6914}
+.bad  .card-header{background:linear-gradient(180deg,#320606 0%,#5e1212 60%,#7e2020 100%);border-bottom:3px solid #6a1414}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+.title-text{font-family:'Cinzel',serif;font-size:17px;font-weight:700;line-height:1.15;color:#f2e8c0;letter-spacing:.2px;flex:1}
+.mana-cost{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px}
+.good .mana-cost{background:#c9a227;color:#1a0e00;border:2px solid #f0e4c0}
+.bad  .mana-cost{background:#6a1414;color:#f5ddd0;border:2px solid #f0e4d0}
+.sub-line{font-family:'Cinzel',serif;font-size:7px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;opacity:.85}
+.good .sub-line{color:#bde08a}
+.bad  .sub-line{color:#f0b0a0}
+.tag-row{display:flex;gap:4px;flex-wrap:wrap}
+.type-tag{font-family:'Cinzel',serif;font-size:6.5px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;padding:2px 6px;border-radius:3px}
+.good .type-tag{background:#1e3a10;color:#bde08a;border:1px solid #4a8a28}
+.bad  .type-tag{background:#3a0808;color:#f0b0a0;border:1px solid #8a2020}
+
+/* Art */
+.card-art{flex:0 0 112px;overflow:hidden;margin:4px 7px 0;border-radius:5px}
+.good .card-art{background:linear-gradient(155deg,#152c0c 0%,#275718 45%,#3f7028 80%,#2a5018 100%);border-top:2px solid #c9a227;border-bottom:3px solid #8B6914}
+.bad  .card-art{background:linear-gradient(155deg,#180606 0%,#340e0e 45%,#501818 80%,#340e0e 100%);border-top:2px solid #b02020;border-bottom:3px solid #6a1414}
+.art-svg{width:100%;height:100%;display:block}
+
+/* Stat bar */
+.stat-bar{height:24px;position:relative;flex-shrink:0}
+.stat-bar svg{width:100%;height:100%;display:block}
+
+/* Body */
+.card-body{flex:1;padding:7px 11px 0;font-size:10.5px;line-height:1.5;display:flex;flex-direction:column;overflow:hidden}
+.card-body p{margin:0 0 4px}
+.code-block{font-family:'Fira Code',monospace;font-size:8.5px;padding:5px 8px;border-radius:4px;margin:4px 0;line-height:1.5;border-left:3px solid}
+.good .code-block{background:#e2d090;border-left-color:#4a8030;color:#182410}
+.bad  .code-block{background:#dfc0b8;border-left-color:#8a2020;color:#280808}
+.flavour-rule{border:none;height:1px;margin:4px 0;opacity:.4;flex-shrink:0}
+.good .flavour-rule{background:#c9a227}
+.bad  .flavour-rule{background:#8a2020}
+
+/* Bottom row */
+.bottom-row{display:flex;align-items:stretch;gap:0;padding:4px 0 0;flex-shrink:0}
+.flavour-col{flex:1;padding-right:7px;display:flex;flex-direction:column;justify-content:space-between}
+.flavour-text{font-style:italic;font-size:9.5px;opacity:.72;line-height:1.4;margin:0}
+
+/* Attribution — bad cards only */
+.attribution{display:flex;align-items:center;justify-content:center;gap:4px;padding-top:4px;padding-bottom:6px}
+.attribution .emoji{font-size:10px;opacity:.65;line-height:1}
+.attribution span{font-family:'Cinzel',serif;font-size:7px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#b06060;opacity:.6}
+
+/* QR col — good cards only */
+.qr-col{flex-shrink:0;width:64px;display:flex;flex-direction:column;align-items:center;gap:3px;padding-left:5px}
+.qr-generated{width:50px;height:50px;border-radius:4px;overflow:hidden;border:1.5px solid rgba(139,105,20,.5);background:white;display:flex;align-items:center;justify-content:center}
+.qr-generated canvas,.qr-generated img{width:46px!important;height:46px!important}
+.qr-label{font-family:'Cinzel',serif;font-size:5.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#6b4a10}
+
+/* Corner deco */
+.cdeco{position:absolute;font-size:11px;opacity:.12;pointer-events:none;font-family:serif}
+.cdeco.tl{top:5px;left:7px}.cdeco.tr{top:5px;right:7px}
+.cdeco.bl{bottom:5px;left:7px}.cdeco.br{bottom:5px;right:7px}
+
+/* Print */
+@media print{
+  body{background:white;padding:0;margin:0}
+  h1,.subtitle,.pair-label{display:none}
+  .card-pair{display:contents}
+  .card{width:3in;height:5in;border-radius:0;page-break-after:always;break-after:page;margin:0;box-shadow:none!important;position:relative}
+  .card::before{content:'';position:absolute;top:.125in;left:.125in;right:.125in;bottom:.125in;border:.5pt dashed rgba(0,0,0,.15);pointer-events:none;z-index:999}
+  .card-pair:last-child .card:last-child{page-break-after:avoid;break-after:avoid}
+  @page{size:3in 5in;margin:0}
+}
+</style>
+</head>
+<body>
+<h1>TYPE DRIVEN DEVELOPMENT</h1>
+<div class="subtitle">25 Card Pairs · Tarot Size 2.75″ × 4.75″ · 0.125″ Bleed · Print at 300 DPI · Greenerprinter Spec</div>
+
+<script>
+// ── Shared helpers ──────────────────────────────────────────────
+function goodCard(id, title, when, tags, artSvg, stat1, stat2, level, desc, code, quote, url) {
+  return `
+  <div class="card good">
+    <span class="cdeco tl">✦</span><span class="cdeco tr">✦</span>
+    <span class="cdeco bl">✦</span><span class="cdeco br">✦</span>
+    <div class="card-header">
+      <div class="header-top"><div class="title-text">${title}</div><div class="mana-cost">★</div></div>
+      <div class="sub-line">✦ When to apply: ${when}</div>
+      <div class="tag-row">${tags.map(t=>`<span class="type-tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="card-art">${artSvg}</div>
+    <div class="stat-bar"><svg viewBox="0 0 275 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <rect width="275" height="24" fill="#e8d49a"/>
+      <rect x="0" y="23" width="275" height="1" fill="#a07820" opacity=".8"/>
+      <text x="12" y="15" font-family="'Cinzel',serif" font-size="8" font-weight="600" fill="#3a2206">${stat1}</text>
+      <text x="137" y="18" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" font-weight="600" fill="#3a2206">${stat2}</text>
+      <text x="263" y="15" text-anchor="end" font-family="'Cinzel',serif" font-size="8" font-weight="600" fill="#3a2206">${level}</text>
+    </svg></div>
+    <div class="card-body">
+      <p>${desc}</p>
+      <div class="code-block">${code}</div>
+      <hr class="flavour-rule">
+      <div class="bottom-row">
+        <div class="flavour-col">
+          <p class="flavour-text">${quote}</p>
+        </div>
+        <div class="qr-col">
+          <div class="qr-generated" id="qr-${id}"></div>
+          <div class="qr-label">Learn More</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function badCard(frontTitle, tags, artSvg, stat1, stat2, desc, code, quote) {
+  return `
+  <div class="card bad">
+    <span class="cdeco tl">☠</span><span class="cdeco tr">☠</span>
+    <span class="cdeco bl">☠</span><span class="cdeco br">☠</span>
+    <div class="card-header">
+      <div class="header-top"><div class="title-text">${tags[0]}</div><div class="mana-cost">☠</div></div>
+      <div class="sub-line">☠ Anti-pattern of: ${frontTitle}</div>
+      <div class="tag-row">${tags.slice(1).map(t=>`<span class="type-tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="card-art">${artSvg}</div>
+    <div class="stat-bar"><svg viewBox="0 0 275 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <rect width="275" height="24" fill="#e8c8c0"/>
+      <rect x="0" y="23" width="275" height="1" fill="#6a1414" opacity=".8"/>
+      <text x="12" y="15" font-family="'Cinzel',serif" font-size="8" font-weight="600" fill="#3a0606">${stat1}</text>
+      <text x="137" y="18" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" font-weight="600" fill="#3a0606">${stat2}</text>
+      <text x="263" y="15" text-anchor="end" font-family="'Cinzel',serif" font-size="8" font-weight="600" fill="#3a0606">☠ Avoid</text>
+    </svg></div>
+    <div class="card-body">
+      <p>${desc}</p>
+      <div class="code-block">${code}</div>
+      <hr class="flavour-rule">
+      <div class="bottom-row">
+        <div class="flavour-col" style="padding-right:0">
+          <p class="flavour-text">${quote}</p>
+          <div class="attribution"><span class="emoji">🃏</span><span>jessewarden.com</span></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function pair(label, frontHtml, backHtml) {
+  return `<div class="pair-label">${label}</div><div class="card-pair">${frontHtml}${backHtml}</div>`;
+}
+
+// ── SVG Art ─────────────────────────────────────────────────────
+const art = {
+  gate: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".5"/>
+    <rect x="44" y="4" width="14" height="104" rx="3" fill="#8B6914"/>
+    <rect x="202" y="4" width="14" height="104" rx="3" fill="#8B6914"/>
+    <path d="M44 22 Q130 2 216 22" stroke="#c9a227" stroke-width="2" fill="none"/>
+    <rect x="62" y="22" width="4" height="70" rx="2" fill="#4a3510" opacity=".85"/>
+    <rect x="72" y="22" width="4" height="70" rx="2" fill="#4a3510" opacity=".85"/>
+    <rect x="82" y="22" width="4" height="70" rx="2" fill="#4a3510" opacity=".85"/>
+    <rect x="92" y="22" width="4" height="70" rx="2" fill="#4a3510" opacity=".85"/>
+    <rect x="148" y="18" width="52" height="78" rx="2" fill="#6ab83a" opacity=".15"/>
+    <rect x="108" y="42" width="46" height="26" rx="5" fill="#c9a227" opacity=".95"/>
+    <rect x="112" y="46" width="38" height="18" rx="3" fill="#0e2008"/>
+    <text x="131" y="58" text-anchor="middle" font-family="'Fira Code',monospace" font-size="7.5" fill="#7ab84a" font-weight="500">✓ VALID</text>
+    <circle cx="180" cy="38" r="9" fill="#bde08a" opacity=".92"/>
+    <rect x="173" y="49" width="14" height="24" rx="5" fill="#bde08a" opacity=".85"/>
+    <text x="196" y="36" font-size="9" fill="#c9a227" opacity=".9">✦</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">One gate. Full trust beyond.</text>
+  </svg>`,
+
+  shotgun: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="18" y="18" width="8" height="76" rx="2" fill="#6a1414" opacity=".85"/>
+    <rect x="62" y="10" width="8" height="84" rx="2" fill="#6a1414" opacity=".85"/>
+    <rect x="126" y="12" width="8" height="80" rx="2" fill="#6a1414" opacity=".85"/>
+    <rect x="190" y="18" width="8" height="76" rx="2" fill="#6a1414" opacity=".85"/>
+    <rect x="234" y="22" width="8" height="70" rx="2" fill="#6a1414" opacity=".85"/>
+    <text x="22" y="13" text-anchor="middle" font-size="11" fill="#e04040">✗</text>
+    <text x="66" y="6" text-anchor="middle" font-size="11" fill="#e04040">✗</text>
+    <text x="130" y="8" text-anchor="middle" font-size="11" fill="#f0a020">?</text>
+    <text x="194" y="13" text-anchor="middle" font-size="11" fill="#e04040">✗</text>
+    <text x="238" y="18" text-anchor="middle" font-size="11" fill="#e04040">✗</text>
+    <path d="M8 96 L50 86 L92 96 L130 76 L168 90 L208 80 L252 94" stroke="#6a1414" stroke-width="1" fill="none" opacity=".7"/>
+    <path d="M126 52 L134 38 L130 54 L146 46 L134 60 L144 74 L130 64 L126 80 L122 64 L108 74 L118 60 L106 46 L122 54 L118 38 Z" fill="#e04040" opacity=".88"/>
+    <text x="130" y="105" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">One bad field. Everything collapses.</text>
+  </svg>`,
+
+  swatches: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="18" y="32" width="28" height="40" rx="4" fill="#e04040" opacity=".9"/>
+    <rect x="52" y="32" width="28" height="40" rx="4" fill="#e09020" opacity=".9"/>
+    <rect x="86" y="32" width="28" height="40" rx="4" fill="#d0c020" opacity=".9"/>
+    <rect x="120" y="28" width="28" height="48" rx="4" fill="#40c040" opacity=".9"/>
+    <rect x="154" y="32" width="28" height="40" rx="4" fill="#4080e0" opacity=".9"/>
+    <rect x="188" y="32" width="28" height="40" rx="4" fill="#9040e0" opacity=".9"/>
+    <rect x="222" y="32" width="28" height="40" rx="4" fill="#e04080" opacity=".9"/>
+    <rect x="120" y="26" width="28" height="52" rx="4" fill="none" stroke="#c9a227" stroke-width="2.5"/>
+    <text x="134" y="84" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#c9a227">CHOSEN</text>
+    <text x="130" y="105" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">One from many. The set is the contract.</text>
+  </svg>`,
+
+  stickyNote: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="70" y="16" width="120" height="70" rx="3" fill="#f5e060" opacity=".85"/>
+    <rect x="70" y="16" width="120" height="12" rx="3" fill="#e0c820" opacity=".9"/>
+    <text x="130" y="26" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#5a4a00" font-weight="700">STICKY NOTE</text>
+    <text x="130" y="43" text-anchor="middle" font-family="'IM Fell English',serif" font-size="9" fill="#3a2a00" font-style="italic">"Remember to</text>
+    <text x="130" y="55" text-anchor="middle" font-family="'IM Fell English',serif" font-size="9" fill="#3a2a00" font-style="italic">do the thing"</text>
+    <text x="130" y="70" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#8a6a00" opacity=".8">...what thing? 🤷</text>
+    <text x="30" y="50" font-size="20" fill="#e04040" opacity=".6">?</text>
+    <text x="215" y="65" font-size="16" fill="#e04040" opacity=".5">?</text>
+    <text x="130" y="105" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">"No." — what does that even mean?</text>
+  </svg>`,
+
+  travelMug: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="90" y="18" width="80" height="74" rx="10" fill="#8B6914" opacity=".8"/>
+    <rect x="94" y="22" width="72" height="66" rx="8" fill="#c9a227" opacity=".35"/>
+    <rect x="82" y="13" width="96" height="13" rx="7" fill="#6a4a10"/>
+    <rect x="86" y="15" width="88" height="9" rx="5" fill="#8B6914"/>
+    <rect x="118" y="16" width="24" height="16" rx="3" fill="#c9a227" opacity=".9"/>
+    <text x="130" y="27" text-anchor="middle" font-size="9" fill="#1a0e00">🔒</text>
+    <text x="130" y="64" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#f2e8c0" font-weight="600">VALID ONLY</text>
+    <text x="130" y="76" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#bde08a" opacity=".8">success | retry | learn</text>
+    <text x="130" y="105" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Only success paths exist.</text>
+  </svg>`,
+
+  trafficLight: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="108" y="10" width="44" height="88" rx="8" fill="#2a2a2a"/>
+    <circle cx="130" cy="30" r="14" fill="#e04040" opacity=".9"/>
+    <circle cx="130" cy="56" r="14" fill="#404040"/>
+    <circle cx="130" cy="82" r="14" fill="#40c040" opacity=".9"/>
+    <text x="60" y="56" font-size="18" fill="#f0a020" opacity=".8">?</text>
+    <text x="185" y="56" font-size="18" fill="#f0a020" opacity=".8">?</text>
+    <text x="130" y="105" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Red AND green? I have no idea.</text>
+  </svg>`,
+
+  checklist: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="58" y="12" width="144" height="82" rx="6" fill="#e8d49a" opacity=".9"/>
+    <text x="130" y="26" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#3a2206" font-weight="700">PRE-FLIGHT CHECK</text>
+    <line x1="68" y1="30" x2="192" y2="30" stroke="#8B6914" stroke-width="1" opacity=".5"/>
+    <text x="74" y="42" font-family="'Fira Code',serif" font-size="9" fill="#2a6a10">✓</text><text x="87" y="42" font-family="'IM Fell English',serif" font-size="8" fill="#3a2206"> loading</text>
+    <text x="74" y="54" font-family="'Fira Code',serif" font-size="9" fill="#2a6a10">✓</text><text x="87" y="54" font-family="'IM Fell English',serif" font-size="8" fill="#3a2206"> success</text>
+    <text x="74" y="66" font-family="'Fira Code',serif" font-size="9" fill="#e04040">✗</text><text x="87" y="66" font-family="'IM Fell English',serif" font-size="8" fill="#c04040"> error ← forgot!</text>
+    <text x="74" y="80" font-family="'Cinzel',serif" font-size="6" fill="#6a4a10" font-style="italic">compiler catches this 👆</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Every lead followed. Nothing missed.</text>
+  </svg>`,
+
+  backpack: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="85" y="18" width="90" height="74" rx="10" fill="#5a3010" opacity=".85"/>
+    <rect x="92" y="26" width="76" height="58" rx="6" fill="#4a2808" opacity=".9"/>
+    <rect x="118" y="18" width="24" height="10" rx="4" fill="#7a4818"/>
+    <text x="130" y="48" text-anchor="middle" font-family="'Fira Code',serif" font-size="7.5" fill="#bde08a">✓ tent</text>
+    <text x="130" y="58" text-anchor="middle" font-family="'Fira Code',serif" font-size="7.5" fill="#bde08a">✓ sleeping bag</text>
+    <text x="130" y="68" text-anchor="middle" font-family="'Fira Code',serif" font-size="7.5" fill="#e04040">✗ food ???</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">All packed. Forgot the food.</text>
+  </svg>`,
+
+  circuitBreaker: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="38" y="26" width="184" height="56" rx="6" fill="#2a4a1a" opacity=".8"/>
+    <line x1="52" y1="54" x2="102" y2="54" stroke="#7ab84a" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="118" cy="54" r="10" fill="#4a8030" stroke="#7ab84a" stroke-width="2"/>
+    <text x="118" y="58" text-anchor="middle" font-size="8" fill="#c9e89a">✓</text>
+    <line x1="128" y1="54" x2="200" y2="54" stroke="#7ab84a" stroke-width="3" stroke-linecap="round"/>
+    <line x1="118" y1="64" x2="118" y2="76" stroke="#e04040" stroke-width="2" stroke-linecap="round"/>
+    <rect x="96" y="76" width="44" height="13" rx="3" fill="#5a1010"/>
+    <text x="118" y="86" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#f0a0a0">Err handled ✓</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Failure is visible. You must handle it.</text>
+  </svg>`,
+
+  hyperdrive: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="48" y="24" width="164" height="56" rx="8" fill="#2a1010" opacity=".9"/>
+    <text x="130" y="46" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#f0a0a0" font-weight="600">HYPERDRIVE</text>
+    <text x="130" y="60" text-anchor="middle" font-family="'Cinzel',serif" font-size="16" fill="#e04040">⚠</text>
+    <text x="130" y="74" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7.5" fill="#f0a0a0" font-style="italic">...it's broken? why?</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Zero indication as to why. Everyone stressed.</text>
+  </svg>`,
+
+  soldiers: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <circle cx="80" cy="34" r="12" fill="#8B6914" opacity=".8"/>
+    <rect x="72" y="46" width="16" height="30" rx="4" fill="#8B6914" opacity=".7"/>
+    <rect x="70" y="26" width="22" height="10" rx="2" fill="#4040e0" opacity=".9"/>
+    <text x="81" y="35" text-anchor="middle" font-size="7">🇺🇸</text>
+    <circle cx="180" cy="34" r="12" fill="#8B6914" opacity=".8"/>
+    <rect x="172" y="46" width="16" height="30" rx="4" fill="#8B6914" opacity=".7"/>
+    <rect x="168" y="26" width="22" height="10" rx="2" fill="#e04040" opacity=".9"/>
+    <text x="179" y="35" text-anchor="middle" font-size="7">🏴</text>
+    <rect x="58" y="80" width="48" height="13" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="82" y="89" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">UserID</text>
+    <rect x="152" y="80" width="56" height="13" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="180" y="89" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">ProductID</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Same uniform. Different flag. Unmistakable.</text>
+  </svg>`,
+
+  primitiveObsession: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="48" y="26" width="72" height="48" rx="6" fill="#5a3010" opacity=".85"/>
+    <rect x="140" y="26" width="72" height="48" rx="6" fill="#5a3010" opacity=".85"/>
+    <text x="84" y="47" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">"abc-123"</text>
+    <text x="176" y="47" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">"abc-123"</text>
+    <text x="84" y="60" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#f0b080">UserID?</text>
+    <text x="176" y="60" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#f0b080">ProductID?</text>
+    <text x="130" y="88" text-anchor="middle" font-size="16" fill="#e04040">↔</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Compiles fine. Fails at runtime. 💥</text>
+  </svg>`,
+
+  passportOffice: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="58" y="20" width="144" height="66" rx="8" fill="#2a4a1a" opacity=".85"/>
+    <text x="130" y="38" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#c9a227" font-weight="700">PASSPORT OFFICE</text>
+    <text x="130" y="52" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#bde08a">createEmail(s): Email | undefined</text>
+    <text x="130" y="64" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#7ab84a" opacity=".8">Official. Validated. Certified.</text>
+    <rect x="100" y="70" width="60" height="10" rx="3" fill="#c9a227" opacity=".3"/>
+    <text x="130" y="78" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#c9a227">✦ NOTARIZED ✦</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">You must go through official channels.</text>
+  </svg>`,
+
+  aliExpress: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="58" y="22" width="144" height="60" rx="6" fill="#3a1010" opacity=".85"/>
+    <text x="130" y="42" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#f0a0a0" font-weight="700">ALI EXPRESS NINJA 400</text>
+    <text x="130" y="55" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7.5" fill="#e0a080">$2,000 — too good to be true</text>
+    <text x="130" y="70" text-anchor="middle" font-size="9" fill="#e04040">⚠ COUNTERFEIT ⚠</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Looks legit. Compiles fine. Disaster inside.</text>
+  </svg>`,
+
+  groceryList: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="48" y="18" width="164" height="68" rx="6" fill="#2a4a1a" opacity=".85"/>
+    <text x="130" y="33" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#c9a227" font-weight="700">GROCERY LIST</text>
+    <text x="84" y="48" font-family="'Fira Code',serif" font-size="8" fill="#bde08a">✓ wine (1 bottle)</text>
+    <text x="84" y="60" font-family="'Fira Code',serif" font-size="8" fill="#bde08a">✓ weird gift (1)</text>
+    <text x="84" y="72" font-family="'Fira Code',serif" font-size="8" fill="#c9a227">∴ always ≥ 1 item</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">"You don't need to bring anything." We do.</text>
+  </svg>`,
+
+  emptyHat: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- upside down hat -->
+    <path d="M70 82 Q130 58 190 82 L200 96 Q130 108 60 96 Z" fill="#2a1a2a" stroke="#6a2a6a" stroke-width="1.5"/>
+    <ellipse cx="130" cy="82" rx="62" ry="8" fill="#3a2a3a" stroke="#8a3a8a" stroke-width="1"/>
+    <!-- magic wand -->
+    <line x1="170" y1="40" x2="210" y2="70" stroke="#c9a227" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="170" cy="40" r="5" fill="#f5e060" opacity=".9"/>
+    <text x="82" y="88" text-anchor="middle" font-size="14">🎩</text>
+    <text x="130" y="76" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#f0a0a0">...nothing inside</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">You reach in. What you thought was there ain't.</text>
+  </svg>`,
+
+  honda: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="40" y="28" width="180" height="58" rx="8" fill="#2a4a1a" opacity=".8"/>
+    <text x="130" y="46" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#c9a227" font-weight="700">ANY HONDA</text>
+    <text x="74" y="58" font-family="'Fira Code',serif" font-size="7.5" fill="#bde08a">Cold?     ✓ Starts</text>
+    <text x="74" y="68" font-family="'Fira Code',serif" font-size="7.5" fill="#bde08a">20yr old? ✓ Starts</text>
+    <text x="74" y="78" font-family="'Fira Code',serif" font-size="7.5" fill="#bde08a">Crashed?  ✓ Starts</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Total. Predictable. Every input handled.</text>
+  </svg>`,
+
+  fastFood: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Ad vs reality burger -->
+    <rect x="32" y="22" width="88" height="68" rx="4" fill="#2a1a08" opacity=".9"/>
+    <text x="76" y="38" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">AD</text>
+    <text x="76" y="60" text-anchor="middle" font-size="20">🍔</text>
+    <text x="76" y="80" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#c9a227">Perfect!</text>
+    <rect x="140" y="22" width="88" height="68" rx="4" fill="#2a1a08" opacity=".9"/>
+    <text x="184" y="38" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#e04040">REALITY</text>
+    <text x="184" y="60" text-anchor="middle" font-size="20">😬</text>
+    <text x="184" y="80" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#e04040">...huh?</text>
+    <text x="118" y="56" text-anchor="middle" font-size="14" fill="#f0a020">≠</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Promises one thing. Delivers another.</text>
+  </svg>`,
+
+  amazon: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="48" y="20" width="164" height="68" rx="8" fill="#2a4a1a" opacity=".85"/>
+    <text x="130" y="38" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#c9a227" font-weight="700">DELIVERED BY AMAZON</text>
+    <text x="130" y="52" text-anchor="middle" font-size="14">📦</text>
+    <text x="130" y="66" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#bde08a">Email.create(input)</text>
+    <text x="130" y="78" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#c9a227">Result&lt;Email, InvalidEmailError&gt;</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Buy from a reputable source. Guaranteed.</text>
+  </svg>`,
+
+  badClothes: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <text x="130" y="46" text-anchor="middle" font-size="28">👕</text>
+    <text x="190" y="38" text-anchor="middle" font-size="16" fill="#e04040">💥</text>
+    <rect x="68" y="60" width="124" height="28" rx="4" fill="#3a1010" opacity=".85"/>
+    <text x="130" y="72" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#f0a0a0">new Email("invalid")</text>
+    <text x="130" y="82" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#e04040">throws 💥 — looks safe</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Cheap brand. Always regret it.</text>
+  </svg>`,
+
+  waterFilter: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Muddy water in, clean out -->
+    <rect x="30" y="30" width="60" height="50" rx="4" fill="#5a4010" opacity=".8"/>
+    <text x="60" y="52" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#a08040">API Shape</text>
+    <text x="60" y="65" text-anchor="middle" font-size="10">🌊</text>
+    <!-- Filter -->
+    <rect x="104" y="36" width="52" height="40" rx="6" fill="#2a4a1a" opacity=".9"/>
+    <text x="130" y="53" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">toUser()</text>
+    <text x="130" y="66" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">ACL</text>
+    <!-- Clean domain -->
+    <rect x="170" y="30" width="60" height="50" rx="4" fill="#1e3a10" opacity=".8"/>
+    <text x="200" y="52" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#bde08a">Domain</text>
+    <text x="200" y="65" text-anchor="middle" font-size="10">✨</text>
+    <line x1="90" y1="56" x2="104" y2="56" stroke="#c9a227" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="156" y1="56" x2="170" y2="56" stroke="#c9a227" stroke-width="1.5"/>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Filter the external. Keep the domain clean.</text>
+  </svg>`,
+
+  kudzu: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Building being overtaken by vines -->
+    <rect x="90" y="24" width="80" height="64" rx="4" fill="#3a3a3a" opacity=".8"/>
+    <rect x="104" y="38" width="16" height="22" rx="2" fill="#2a2a5a" opacity=".8"/>
+    <rect x="140" y="38" width="16" height="22" rx="2" fill="#2a2a5a" opacity=".8"/>
+    <!-- Kudzu vines -->
+    <path d="M20 80 Q60 40 100 60 Q80 30 130 40 Q160 20 200 50 Q220 30 250 60" stroke="#2a5a1a" stroke-width="3" fill="none" opacity=".8"/>
+    <path d="M10 90 Q50 60 90 75 Q120 50 160 65 Q190 45 240 70" stroke="#3a7a2a" stroke-width="2" fill="none" opacity=".7"/>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Other system's types are like Kudzu.</text>
+  </svg>`,
+
+  aqueduct: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Roman aqueduct arches -->
+    <rect x="20" y="70" width="220" height="12" rx="3" fill="#8B6914" opacity=".8"/>
+    <path d="M30 70 Q45 50 60 70" fill="none" stroke="#8B6914" stroke-width="4"/>
+    <path d="M70 70 Q85 50 100 70" fill="none" stroke="#8B6914" stroke-width="4"/>
+    <path d="M110 70 Q125 50 140 70" fill="none" stroke="#8B6914" stroke-width="4"/>
+    <path d="M150 70 Q165 50 180 70" fill="none" stroke="#8B6914" stroke-width="4"/>
+    <path d="M190 70 Q205 50 220 70" fill="none" stroke="#8B6914" stroke-width="4"/>
+    <!-- Water flow -->
+    <rect x="20" y="62" width="220" height="8" rx="2" fill="#4080c0" opacity=".6"/>
+    <!-- Settling basin -->
+    <rect x="96" y="28" width="68" height="34" rx="4" fill="#2a4a6a" opacity=".85"/>
+    <text x="130" y="43" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#80c0e0">SETTLING</text>
+    <text x="130" y="54" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#80c0e0">BASIN</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Water from here to there. Types ensure it works.</text>
+  </svg>`,
+
+  frozenPipe: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Pipe with ice/crack -->
+    <rect x="30" y="44" width="80" height="20" rx="4" fill="#4a1a1a" opacity=".8"/>
+    <rect x="115" y="44" width="20" height="20" rx="4" fill="#8ac0e0" opacity=".9"/>
+    <text x="125" y="57" text-anchor="middle" font-size="10">🧊</text>
+    <rect x="140" y="44" width="90" height="20" rx="4" fill="#4a1a1a" opacity=".8"/>
+    <!-- X mark at frozen section -->
+    <text x="125" y="40" text-anchor="middle" font-size="10" fill="#e04040">✗</text>
+    <!-- DMV sign -->
+    <rect x="68" y="74" width="124" height="22" rx="3" fill="#3a1010" opacity=".85"/>
+    <text x="130" y="88" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#f0a0a0">DMV: Wrong form. Try again.</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">One weak link stops the whole chain.</text>
+  </svg>`,
+
+  roomba: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- State machine boxes -->
+    <rect x="14" y="36" width="44" height="20" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="36" y="49" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">CHARGING</text>
+    <rect x="72" y="20" width="44" height="20" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="94" y="33" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">MAPPING</text>
+    <rect x="130" y="36" width="44" height="20" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="152" y="49" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">CLEANING</text>
+    <rect x="72" y="54" width="44" height="20" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="94" y="67" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">EMPTYING</text>
+    <rect x="188" y="36" width="44" height="20" rx="3" fill="#2a5010" stroke="#4a8a28" stroke-width="1"/>
+    <text x="210" y="49" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#c9e89a">STUCK</text>
+    <!-- Arrows -->
+    <line x1="58" y1="46" x2="72" y2="36" stroke="#c9a227" stroke-width="1" marker-end="url(#arw)"/>
+    <line x1="116" y1="30" x2="130" y2="42" stroke="#c9a227" stroke-width="1"/>
+    <line x1="174" y1="46" x2="188" y2="46" stroke="#c9a227" stroke-width="1"/>
+    <line x1="152" y1="56" x2="116" y2="60" stroke="#c9a227" stroke-width="1"/>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Clear states. Valid transitions only.</text>
+  </svg>`,
+
+  wrongOrder: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Oven with wrong steps -->
+    <rect x="60" y="22" width="140" height="70" rx="6" fill="#2a1010" opacity=".85"/>
+    <rect x="74" y="34" width="112" height="46" rx="4" fill="#1a0808" opacity=".9"/>
+    <text x="130" y="55" text-anchor="middle" font-size="18">🍕</text>
+    <text x="130" y="71" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7" fill="#f0a0a0">20 min later... oven was OFF</text>
+    <text x="130" y="30" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#f0a0a0">OVEN: OFF</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">approve(draft) compiles. Shouldn't.</text>
+  </svg>`,
+
+  ruler: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Ruler with inches and cm -->
+    <rect x="20" y="38" width="220" height="36" rx="4" fill="#e8d49a" opacity=".9"/>
+    <text x="130" y="28" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227" font-weight="700">DUAL-SIDED RULER</text>
+    <!-- Tick marks top (inches) -->
+    <text x="26" y="50" font-family="'Cinzel',serif" font-size="6" fill="#3a2206">in</text>
+    <line x1="50" y1="38" x2="50" y2="48" stroke="#3a2206" stroke-width="1"/>
+    <line x1="80" y1="38" x2="80" y2="48" stroke="#3a2206" stroke-width="1"/>
+    <line x1="110" y1="38" x2="110" y2="48" stroke="#3a2206" stroke-width="1"/>
+    <line x1="140" y1="38" x2="140" y2="48" stroke="#3a2206" stroke-width="1"/>
+    <line x1="170" y1="38" x2="170" y2="48" stroke="#3a2206" stroke-width="1"/>
+    <line x1="200" y1="38" x2="200" y2="48" stroke="#3a2206" stroke-width="1"/>
+    <!-- Tick marks bottom (cm) -->
+    <text x="26" y="70" font-family="'Cinzel',serif" font-size="6" fill="#1a4a10">cm</text>
+    <line x1="46" y1="64" x2="46" y2="74" stroke="#1a4a10" stroke-width="1"/>
+    <line x1="66" y1="64" x2="66" y2="74" stroke="#1a4a10" stroke-width="1"/>
+    <line x1="86" y1="64" x2="86" y2="74" stroke="#1a4a10" stroke-width="1"/>
+    <line x1="106" y1="64" x2="106" y2="74" stroke="#1a4a10" stroke-width="1"/>
+    <line x1="126" y1="64" x2="126" y2="74" stroke="#1a4a10" stroke-width="1"/>
+    <line x1="146" y1="64" x2="146" y2="74" stroke="#1a4a10" stroke-width="1"/>
+    <!-- USD vs EUR tags -->
+    <rect x="60" y="82" width="42" height="14" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="81" y="92" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#bde08a">Money&lt;USD&gt;</text>
+    <rect x="158" y="82" width="42" height="14" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="179" y="92" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#bde08a">Money&lt;EUR&gt;</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Unmistakably which system you're in.</text>
+  </svg>`,
+
+  currencyMixup: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="30" y="24" width="80" height="64" rx="6" fill="#2a1010" opacity=".85"/>
+    <text x="70" y="44" text-anchor="middle" font-family="'Cinzel',serif" font-size="9" fill="#f0c060">$10</text>
+    <text x="70" y="60" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">USD</text>
+    <text x="70" y="80" text-anchor="middle" font-size="14">🇺🇸</text>
+    <rect x="150" y="24" width="80" height="64" rx="6" fill="#2a1010" opacity=".85"/>
+    <text x="190" y="44" text-anchor="middle" font-family="'Cinzel',serif" font-size="9" fill="#f0c060">€7</text>
+    <text x="190" y="60" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">EUR</text>
+    <text x="190" y="80" text-anchor="middle" font-size="14">🇪🇺</text>
+    <text x="130" y="52" text-anchor="middle" font-size="14" fill="#e04040">+</text>
+    <text x="130" y="72" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#e04040">= ???</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Silently wrong. Compiles just fine. 💥</text>
+  </svg>`,
+
+  woodchuck: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <text x="130" y="46" text-anchor="middle" font-size="24">🦫</text>
+    <!-- Type tags -->
+    <rect x="30" y="58" width="52" height="14" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="56" y="68" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">Meters</text>
+    <rect x="104" y="58" width="52" height="14" rx="3" fill="#2a4a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="130" y="68" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#bde08a">Seconds</text>
+    <rect x="178" y="58" width="52" height="14" rx="3" fill="#1e3a10" stroke="#4a8a28" stroke-width="1"/>
+    <text x="204" y="68" text-anchor="middle" font-family="'Cinzel',serif" font-size="5.5" fill="#bde08a">m/s</text>
+    <text x="88" y="67" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#c9a227">÷</text>
+    <text x="164" y="67" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#c9a227">=</text>
+    <text x="130" y="86" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#bde08a">addMeters(d, t) → compile error ✓</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Units enforce the math. Always.</text>
+  </svg>`,
+
+  unitMixup: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="30" y="26" width="80" height="60" rx="6" fill="#2a1010" opacity=".85"/>
+    <text x="70" y="48" text-anchor="middle" font-family="'Cinzel',serif" font-size="9" fill="#f0c060">100</text>
+    <text x="70" y="62" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">meters</text>
+    <text x="70" y="78" text-anchor="middle" font-size="12">📏</text>
+    <rect x="150" y="26" width="80" height="60" rx="6" fill="#2a1010" opacity=".85"/>
+    <text x="190" y="48" text-anchor="middle" font-family="'Cinzel',serif" font-size="9" fill="#f0c060">9.58</text>
+    <text x="190" y="62" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">seconds</text>
+    <text x="190" y="78" text-anchor="middle" font-size="12">⏱</text>
+    <text x="130" y="52" text-anchor="middle" font-size="12" fill="#e04040">+</text>
+    <text x="130" y="70" text-anchor="middle" font-family="'Cinzel',serif" font-size="8" fill="#e04040">💥 NaN</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Mars Climate Orbiter: $327M mistake.</text>
+  </svg>`,
+
+  clothesline: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Clothesline -->
+    <line x1="20" y1="40" x2="240" y2="40" stroke="#8B6914" stroke-width="1.5"/>
+    <!-- Items hanging -->
+    <text x="50" y="68" text-anchor="middle" font-size="18">👔</text>
+    <text x="100" y="68" text-anchor="middle" font-size="18">🧥</text>
+    <text x="150" y="68" text-anchor="middle" font-size="18">🦺</text>
+    <text x="200" y="68" text-anchor="middle" font-size="18">🧤</text>
+    <!-- Pegs -->
+    <circle cx="50" cy="40" r="3" fill="#c9a227"/>
+    <circle cx="100" cy="40" r="3" fill="#c9a227"/>
+    <circle cx="150" cy="40" r="3" fill="#c9a227"/>
+    <circle cx="200" cy="40" r="3" fill="#c9a227"/>
+    <text x="130" y="22" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">function registerUser(sendEmail, user)</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">You see what it does. Nothing hidden.</text>
+  </svg>`,
+
+  lightSwitch: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Light switch -->
+    <rect x="96" y="22" width="68" height="68" rx="6" fill="#2a2a2a"/>
+    <rect x="104" y="30" width="52" height="52" rx="4" fill="#1a1a1a"/>
+    <rect x="120" y="38" width="20" height="36" rx="3" fill="#3a1010" stroke="#6a1414" stroke-width="1"/>
+    <!-- Chaos of things turning on -->
+    <text x="38" y="46" font-size="14" fill="#f0c040" opacity=".8">💡</text>
+    <text x="38" y="68" font-size="12" fill="#e04040" opacity=".7">🔔</text>
+    <text x="196" y="46" font-size="14" fill="#40a0f0" opacity=".8">📺</text>
+    <text x="196" y="68" font-size="12" fill="#40c040" opacity=".7">🌀</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Turned on a light. Fan, clock, beep. What?</text>
+  </svg>`,
+
+  typeProofs: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Math proof on chalkboard -->
+    <rect x="30" y="16" width="200" height="76" rx="6" fill="#1a3a1a" opacity=".9"/>
+    <text x="130" y="32" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#c9a227" font-weight="700">PROOF</text>
+    <text x="46" y="46" font-family="'Fira Code',serif" font-size="7" fill="#bde08a">Given: p[0] &lt; p[1]</text>
+    <text x="46" y="57" font-family="'Fira Code',serif" font-size="7" fill="#bde08a">Assert: assertOrdered(p)</text>
+    <text x="46" y="68" font-family="'Fira Code',serif" font-size="7" fill="#bde08a">∴ p is OrderedPair ✓</text>
+    <text x="46" y="79" font-family="'Fira Code',serif" font-size="7" fill="#c9a227">// compiler now knows!</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Show your work. Test that work.</text>
+  </svg>`,
+
+  unprovenInvariants: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Comment-only "proof" -->
+    <rect x="30" y="18" width="200" height="74" rx="6" fill="#2a1010" opacity=".9"/>
+    <text x="130" y="33" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#f0a0a0" font-weight="700">TRUSTED BY... COMMENT</text>
+    <text x="46" y="46" font-family="'Fira Code',serif" font-size="7" fill="#888">// assume sorted</text>
+    <text x="46" y="57" font-family="'Fira Code',serif" font-size="7" fill="#c08080">tuple[0] + tuple[1]</text>
+    <text x="46" y="68" font-family="'Fira Code',serif" font-size="7" fill="#888">// oops, reordered above 💥</text>
+    <text x="46" y="79" font-family="'Fira Code',serif" font-size="7" fill="#e04040">range check: BROKEN</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">The types aren't total.</text>
+  </svg>`,
+
+  klingon: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#2a4a3a" opacity=".4"/>
+    <!-- Error algebra -->
+    <rect x="28" y="20" width="204" height="68" rx="6" fill="#1a3a2a" opacity=".9"/>
+    <text x="130" y="34" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#c9a227" font-weight="700">CHECKOUT ERROR ALGEBRA</text>
+    <text x="42" y="47" font-family="'Fira Code',serif" font-size="6.5" fill="#80e0a0">CardDeclined</text>
+    <text x="42" y="57" font-family="'Fira Code',serif" font-size="6.5" fill="#80e0a0">InventoryChanged</text>
+    <text x="42" y="67" font-family="'Fira Code',serif" font-size="6.5" fill="#80e0a0">TransientNetwork</text>
+    <text x="168" y="47" font-family="'Cinzel',serif" font-size="6" fill="#c9a227">→ retry card</text>
+    <text x="168" y="57" font-family="'Cinzel',serif" font-size="6" fill="#c9a227">→ refresh</text>
+    <text x="168" y="67" font-family="'Cinzel',serif" font-size="6" fill="#c9a227">→ backoff</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Named. Handled. Recoverable.</text>
+  </svg>`,
+
+  stringlyFailed: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Dead car dashboard -->
+    <rect x="38" y="22" width="184" height="66" rx="8" fill="#1a0808" opacity=".9"/>
+    <!-- Gauge cluster — all dark -->
+    <circle cx="80" cy="56" r="22" fill="#2a1010" stroke="#4a1414" stroke-width="1"/>
+    <circle cx="130" cy="56" r="22" fill="#2a1010" stroke="#4a1414" stroke-width="1"/>
+    <circle cx="180" cy="56" r="22" fill="#2a1010" stroke="#4a1414" stroke-width="1"/>
+    <text x="80" y="60" text-anchor="middle" font-size="12" fill="#3a1414">◉</text>
+    <text x="130" y="60" text-anchor="middle" font-size="12" fill="#3a1414">◉</text>
+    <text x="180" y="60" text-anchor="middle" font-size="12" fill="#3a1414">◉</text>
+    <text x="130" y="29" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#f0a0a0">throw new Error("checkout failed")</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">No lights. No idea. No way to fix it.</text>
+  </svg>`,
+
+  meetingPoint: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="28" y="18" width="204" height="70" rx="6" fill="#2a4a1a" opacity=".85"/>
+    <text x="130" y="33" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#c9a227" font-weight="700">SINGLE SOURCE OF TRUTH</text>
+    <text x="44" y="46" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">6pm EST</text>
+    <text x="44" y="56" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">Baker &amp; George St</text>
+    <text x="44" y="66" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">coffee shop, inside</text>
+    <text x="200" y="46" text-anchor="middle" font-size="12">🕕</text>
+    <text x="200" y="62" text-anchor="middle" font-size="12">📍</text>
+    <text x="200" y="78" text-anchor="middle" font-size="12">☕</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">One definition. No ambiguity. Everyone shares it.</text>
+  </svg>`,
+
+  schemaDrift: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="16" y="22" width="66" height="66" rx="5" fill="#2a1010" opacity=".85"/>
+    <text x="49" y="36" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#f0a0a0">TS Type</text>
+    <text x="49" y="48" font-family="'Fira Code',serif" font-size="6" fill="#c08080">email?</text>
+    <text x="49" y="60" font-family="'Fira Code',serif" font-size="6" fill="#c08080">string</text>
+    <rect x="97" y="22" width="66" height="66" rx="5" fill="#2a1010" opacity=".85"/>
+    <text x="130" y="36" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#f0a0a0">Parser</text>
+    <text x="130" y="48" font-family="'Fira Code',serif" font-size="6" fill="#c08080">email</text>
+    <text x="130" y="60" font-family="'Fira Code',serif" font-size="6" fill="#c08080">required!</text>
+    <rect x="178" y="22" width="66" height="66" rx="5" fill="#2a1010" opacity=".85"/>
+    <text x="211" y="36" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#f0a0a0">API Docs</text>
+    <text x="211" y="48" font-family="'Fira Code',serif" font-size="6" fill="#c08080">e_mail</text>
+    <text x="211" y="60" font-family="'Fira Code',serif" font-size="6" fill="#c08080">???</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">"You said 6?" "Yeah, 6pm, not am."</text>
+  </svg>`,
+
+  qaEngineer: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="28" y="16" width="204" height="72" rx="6" fill="#2a4a1a" opacity=".85"/>
+    <text x="130" y="30" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227" font-weight="700">QA ENGINEER WALKS INTO A BAR</text>
+    <text x="44" y="43" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">orders: 1 beer ✓</text>
+    <text x="44" y="53" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">orders: 0 beers ✓</text>
+    <text x="44" y="63" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">orders: 999999999 ✓</text>
+    <text x="44" y="73" font-family="'Fira Code',serif" font-size="6.5" fill="#bde08a">orders: a lizard ✓</text>
+    <text x="44" y="83" font-family="'Fira Code',serif" font-size="6.5" fill="#c9a227">orders: -1 beers... 🤔</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Every possible input. Every time.</text>
+  </svg>`,
+
+  deadpool: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <text x="130" y="46" text-anchor="middle" font-size="26">🦸</text>
+    <rect x="38" y="58" width="184" height="30" rx="5" fill="#2a1010" opacity=".85"/>
+    <text x="130" y="70" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#f0a0a0" font-style="italic">"Oh god... did I leave the</text>
+    <text x="130" y="82" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#f0a0a0" font-style="italic">oven on!?" — Deadpool</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Tests pass for ASCII. Unicode: 💥</text>
+  </svg>`,
+
+  thaiPlace: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Thai menu -->
+    <rect x="46" y="16" width="168" height="76" rx="6" fill="#2a4a1a" opacity=".85"/>
+    <text x="130" y="30" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#c9a227" font-weight="700">THAI PLACE MENU</text>
+    <text x="62" y="44" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a">Pork Basil Fried Rice</text>
+    <rect x="62" y="50" width="80" height="12" rx="3" fill="#1a3a10"/>
+    <text x="102" y="59" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#c9e89a">Some(dish) ✓</text>
+    <text x="62" y="74" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a">Popcorn Chicken</text>
+    <rect x="62" y="80" width="80" height="12" rx="3" fill="#1a3a10"/>
+    <text x="102" y="89" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#c9e89a">fallback ✓</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Maybe some. If None — handle it gracefully.</text>
+  </svg>`,
+
+  agentSmith: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="28" y="20" width="204" height="70" rx="6" fill="#1a1a2a" opacity=".95"/>
+    <text x="130" y="36" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#f0a0a0" font-weight="700">NULL POINTER EXCEPTION</text>
+    <text x="130" y="54" text-anchor="middle" font-size="16">☎️</text>
+    <text x="130" y="68" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7.5" fill="#c08080" font-style="italic">"What good is a phone call</text>
+    <text x="130" y="79" text-anchor="middle" font-family="'IM Fell English',serif" font-size="7.5" fill="#c08080" font-style="italic">if you are unable to speak?"</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">user.address.city — address is undefined 💥</text>
+  </svg>`,
+
+  blueprint: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <rect x="28" y="16" width="204" height="76" rx="6" fill="#1a2a4a" opacity=".9"/>
+    <text x="130" y="30" text-anchor="middle" font-family="'Cinzel',serif" font-size="7.5" fill="#c9a227" font-weight="700">BLUEPRINT: MONEY</text>
+    <line x1="44" y1="36" x2="216" y2="36" stroke="#4080c0" stroke-width=".5" opacity=".6"/>
+    <text x="52" y="48" font-family="'Fira Code',serif" font-size="7" fill="#80c0e0">amount:   number</text>
+    <text x="52" y="59" font-family="'Fira Code',serif" font-size="7" fill="#80c0e0">currency: Currency</text>
+    <line x1="44" y1="65" x2="216" y2="65" stroke="#4080c0" stroke-width=".5" opacity=".6"/>
+    <text x="52" y="76" font-family="'Cinzel',serif" font-size="6.5" fill="#60a0d0">breed + name + age = Dog</text>
+    <text x="52" y="86" font-family="'Cinzel',serif" font-size="6.5" fill="#60a0d0">amount + currency = Money</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Blueprint of everything. AND composition.</text>
+  </svg>`,
+
+  positionalBug: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="20" y="22" width="100" height="66" rx="5" fill="#2a1010" opacity=".85"/>
+    <text x="70" y="37" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#c9a227">charge(100, "USD")</text>
+    <text x="70" y="52" text-anchor="middle" font-size="14">✅</text>
+    <text x="70" y="68" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#bde08a">correct</text>
+    <rect x="140" y="22" width="100" height="66" rx="5" fill="#2a1010" opacity=".85"/>
+    <text x="190" y="37" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#e04040">charge("USD", 100)</text>
+    <text x="190" y="52" text-anchor="middle" font-size="14">💥</text>
+    <text x="190" y="68" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#e04040">compiles fine</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">"100 wat... dollars? pesos? bitcoin?"</text>
+  </svg>`,
+
+  badge: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Employee badge -->
+    <rect x="74" y="16" width="112" height="76" rx="8" fill="#2a4a6a" opacity=".9"/>
+    <rect x="84" y="26" width="92" height="56" rx="6" fill="#1a3a5a" opacity=".9"/>
+    <rect x="108" y="16" width="44" height="12" rx="4" fill="#4a6a8a"/>
+    <text x="130" y="42" text-anchor="middle" font-size="16">👤</text>
+    <text x="130" y="56" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#80c0e0">REGISTERED</text>
+    <text x="130" y="66" text-anchor="middle" font-family="'Cinzel',serif" font-size="6" fill="#60a0c0">unknown → known ✓</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">You must register first. No shortcuts.</text>
+  </svg>`,
+
+  anyLeak: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Street person getting badge -->
+    <text x="80" y="50" text-anchor="middle" font-size="22">🧟</text>
+    <text x="180" y="50" text-anchor="middle" font-size="22">🏢</text>
+    <line x1="100" y1="46" x2="160" y2="46" stroke="#e04040" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="130" y="42" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#e04040">: any</text>
+    <rect x="38" y="64" width="184" height="22" rx="4" fill="#3a1010" opacity=".85"/>
+    <text x="130" y="72" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#f0a0a0">"this random dude I found</text>
+    <text x="130" y="82" text-anchor="middle" font-family="'Cinzel',serif" font-size="6.5" fill="#f0a0a0">on the street is with me"</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Convenient. Dangerous. Very dangerous.</text>
+  </svg>`,
+
+  yin: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Yin yang -->
+    <circle cx="130" cy="54" r="32" fill="#1a1a1a" opacity=".9"/>
+    <path d="M130 22 A32 32 0 0 1 130 86 A16 16 0 0 1 130 54 A16 16 0 0 0 130 22" fill="#f5e9c8"/>
+    <circle cx="130" cy="38" r="6" fill="#1a1a1a"/>
+    <circle cx="130" cy="70" r="6" fill="#f5e9c8"/>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">1 is always 1. Immutable. Predictable.</text>
+  </svg>`,
+
+  counterStrike: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <!-- Sniper scope glitch -->
+    <rect x="40" y="20" width="180" height="72" rx="6" fill="#0a1010" opacity=".95"/>
+    <circle cx="130" cy="56" r="28" fill="none" stroke="#40a040" stroke-width="1" opacity=".7"/>
+    <line x1="130" y1="28" x2="130" y2="84" stroke="#40a040" stroke-width=".5" opacity=".5"/>
+    <line x1="102" y1="56" x2="158" y2="56" stroke="#40a040" stroke-width=".5" opacity=".5"/>
+    <!-- Wall glitch effect -->
+    <rect x="100" y="30" width="60" height="52" fill="#1a2a1a" opacity=".6"/>
+    <text x="130" y="58" text-anchor="middle" font-family="'Cinzel',serif" font-size="7" fill="#e04040">SEEING THROUGH WALL</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">Camera moved through the wall. Mutation glitch.</text>
+  </svg>`,
+
+  railway: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#152c0c"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#27501a" opacity=".4"/>
+    <!-- Green track -->
+    <line x1="18" y1="38" x2="242" y2="38" stroke="#40c040" stroke-width="4" stroke-linecap="round"/>
+    <line x1="18" y1="46" x2="242" y2="46" stroke="#40c040" stroke-width="4" stroke-linecap="round"/>
+    <!-- Track ties -->
+    <line x1="50" y1="34" x2="50" y2="50" stroke="#8B6914" stroke-width="2"/>
+    <line x1="90" y1="34" x2="90" y2="50" stroke="#8B6914" stroke-width="2"/>
+    <line x1="130" y1="34" x2="130" y2="50" stroke="#8B6914" stroke-width="2"/>
+    <line x1="170" y1="34" x2="170" y2="50" stroke="#8B6914" stroke-width="2"/>
+    <line x1="210" y1="34" x2="210" y2="50" stroke="#8B6914" stroke-width="2"/>
+    <!-- Red track (failure) -->
+    <line x1="130" y1="50" x2="130" y2="78" stroke="#e04040" stroke-width="2" stroke-dasharray="4 2"/>
+    <line x1="18" y1="78" x2="242" y2="78" stroke="#e04040" stroke-width="3" stroke-linecap="round"/>
+    <line x1="18" y1="86" x2="242" y2="86" stroke="#e04040" stroke-width="3" stroke-linecap="round"/>
+    <text x="24" y="42" font-family="'Cinzel',serif" font-size="6" fill="#c9e89a">SUCCESS</text>
+    <text x="24" y="82" font-family="'Cinzel',serif" font-size="6" fill="#f0a0a0">FAILURE</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#bde08a" opacity=".7" font-style="italic">Once on red, no going back.</text>
+  </svg>`,
+
+  nestedIf: `<svg class="art-svg" viewBox="0 0 260 112" xmlns="http://www.w3.org/2000/svg">
+    <rect width="260" height="112" fill="#180606"/>
+    <ellipse cx="130" cy="56" rx="110" ry="44" fill="#350e0e" opacity=".5"/>
+    <rect x="20" y="14" width="220" height="80" rx="5" fill="#1a0808" opacity=".9"/>
+    <text x="28" y="28" font-family="'Fira Code',serif" font-size="7" fill="#c08080">if (ok1) {</text>
+    <text x="42" y="39" font-family="'Fira Code',serif" font-size="7" fill="#c08080">if (ok2) {</text>
+    <text x="56" y="50" font-family="'Fira Code',serif" font-size="7" fill="#c08080">try {</text>
+    <text x="70" y="61" font-family="'Fira Code',serif" font-size="7" fill="#808080">...</text>
+    <text x="56" y="72" font-family="'Fira Code',serif" font-size="7" fill="#c08080">} catch { ... }</text>
+    <text x="42" y="83" font-family="'Fira Code',serif" font-size="7" fill="#c08080">} else { ... }</text>
+    <text x="28" y="88" font-family="'Fira Code',serif" font-size="7" fill="#808080">}</text>
+    <text x="130" y="104" text-anchor="middle" font-family="'IM Fell English',serif" font-size="8" fill="#eeaaaa" opacity=".72" font-style="italic">So many rocks. No one will rescue you.</text>
+  </svg>`,
+};
+
+// ── Build all cards ──────────────────────────────────────────────
+const cards = [
+
+pair("Card 1 — Parse, Don't Validate / Shotgun Parsing",
+  goodCard(1,"Parse, Don't Validate","Boundaries &amp; IO",["Enchantment","Beginner","TypeScript"],
+    art.gate,"⚔ Parse Once","🛡 Type-Safe","✦ Beginner",
+    "Transform untyped data into typed structures at system boundaries. Once parsed, trust the types everywhere inside your application.",
+    "const user = ZodUserSchema.parse(json)<br><br>// user.name &amp; user.email guaranteed<br>// valid everywhere — no re-checking",
+    '"One badge swipe and you\'re in the club. No repeated interrogations at every door inside."',
+    "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/"),
+  badCard("Parse, Don't Validate",
+    ["Shotgun Parsing","Curse","Scattered IO","Avoid"],
+    art.shotgun,"💀 Fragility: MAX","⚠ Spread: 5 files",
+    "Validation logic scattered throughout the codebase. Each function checks only the fields it needs — one unchecked field anywhere crashes everything.",
+    "if (json.name &amp;&amp;<br>  typeof json.name !== 'string')<br>  throw new Error('invalid name')<br>// repeated in 5 files. json.email? 💥",
+    '"Walking on thin ice — every single step is terrifying. One wrong crack and the whole program falls through."')),
+
+pair("Card 2 — Discriminated Unions / Boolean Blindness",
+  goodCard(2,"Discriminated Unions","Domain Modeling, State Machines",["Enchantment","Beginner","⚡ Most Important"],
+    art.swatches,"🏷 Tagged Variants","🔀 Exhaustive","✦ Beginner",
+    "Use a <em>tag</em> field to distinguish between variants of a type. Enables exhaustive pattern matching — the most important card in the deck.",
+    "type Result&lt;T,E&gt; =<br>  | { tag: 'Ok',  value: T }<br>  | { tag: 'Err', error: E }",
+    '"A row of weapons — you can carry all, but only draw one. The set defines your world."',
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions"),
+  badCard("Discriminated Unions",
+    ["Boolean Blindness","Curse","Lost Context","Avoid"],
+    art.stickyNote,"💀 Lost Context","⚠ Runtime Checks",
+    "Using booleans or strings to represent states loses information and requires runtime checks to determine meaning.",
+    'process(true, {}, undefined)<br>// caller must remember what true means<br>// often must read implementation 😬',
+    '"Did you ship my package?" "No." — waiting? in customs? lost? \'No\' tells you nothing."')),
+
+pair("Card 3 — Make Impossible States Impossible / Invalid State Combinations",
+  goodCard(3,"Make Impossible States Impossible","Domain Modeling, State Machines",["Enchantment","Beginner"],
+    art.travelMug,"🔒 Type-Locked","✅ No Invalid Path","✦ Beginner",
+    "Design types so invalid states cannot be represented. Use discriminated unions to make each state explicit and compiler-enforced.",
+    "type Request =<br>  | { tag: 'loading' }<br>  | { tag: 'success', data: User }<br>  | { tag: 'error',   error: string }",
+    '"Pro athletes visualize success, then go do it. You can\'t screw up if success is the only path."',
+    "https://www.youtube.com/watch?v=IcgmSRJHu_8"),
+  badCard("Make Impossible States Impossible",
+    ["Invalid State Combinations","Curse","Optional Fields","Avoid"],
+    art.trafficLight,"💀 Contradictory","⚠ Optional Fields",
+    "Optional fields with implicit relationships — certain combinations are meaningless or contradictory. What does loading:true with data AND error mean?",
+    "type Request = {<br>  loading: boolean<br>  data?:   User<br>  error?:  string<br>} // 8 states, most are nonsense",
+    '"Red AND green at the same time. I\'d try to go... but only if others were stopped maybe?"')),
+
+pair("Card 4 — Exhaustiveness Checking / Forgotten Case Bugs",
+  goodCard(4,"Exhaustiveness Checking","Domain Modeling, State Machines",["Enchantment","Beginner"],
+    art.checklist,"🔍 Compile-Time","✅ All Cases","✦ Beginner",
+    "Compiler ensures all union cases are handled. Add a new variant and the compiler shows every place that needs updating.",
+    "switch(request.tag) {<br>  case 'loading': ...<br>  case 'success': ...<br>  // compiler: forgot 'error'! ✗",
+    '"If you\'re a detective, every possible lead is followed. No forgotten case bugs."',
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking"),
+  badCard("Exhaustiveness Checking",
+    ["Forgotten Case Bugs","Curse","Runtime Only","Avoid"],
+    art.backpack,"💀 Runtime Surprise","⚠ String Status",
+    "Adding a new string status and missing handlers in switch statements — discovered only at runtime, never at compile time.",
+    "switch (request.status) {<br>  case 'loading': ...<br>  case 'success': ...<br>  // added 'cancelled' — oops 💥",
+    '"Left the house with wallet, phone, laptop. Forgot the keys."')),
+
+pair("Card 5 — Result Types / Exception Blindness",
+  goodCard(5,"Result Types","Boundaries/IO, API Design",["Enchantment","Beginner"],
+    art.circuitBreaker,"🎯 Explicit Failure","🔀 Forced Handle","✦ Beginner",
+    "Return success or failure explicitly in the type. Caller must handle both cases — failure is a visible possibility, not a hidden surprise.",
+    "function readFile(fileName: string):<br>  Result&lt;File, NotFound | NoPermission&gt;",
+    '"The chef is out of ramen — but recommends katsu curry because she knows you like pork."',
+    "https://github.com/supermacro/neverthrow"),
+  badCard("Result Types",
+    ["Exception Blindness","Curse","Hidden Failure","Avoid"],
+    art.hyperdrive,"💀 Hidden Throws","⚠ Bypass Types",
+    "try/catch doesn't tell you what can fail from the type signature. Exceptions bypass the type system entirely.",
+    "function getUser(id: string): User<br>// throws NotFoundError?<br>// throws ValidationError?<br>// throws DatabaseError? Who knows! 🎲",
+    '"I have a problem" — then silence. Do they need help now? No hint at what to try."')),
+
+pair("Card 6 — Branded Types / Primitive Obsession",
+  goodCard(6,"Branded Types","Domain Modeling",["Enchantment","Intermediate"],
+    art.soldiers,"🏷 Semantic Tags","🛡 Compile-Time","⚡ Intermediate",
+    "Distinguish semantically different values that share the same primitive type. The compiler prevents mixing them up.",
+    "type UserID    = string &amp; { brand: 'UserID' }<br>type ProductID = string &amp; { brand: 'ProductID' }<br>// mixing them → compile error ✓",
+    '"Soldiers tagged with a country flag — uniforms look similar, but the brand makes them unmistakable."',
+    "https://egghead.io/blog/using-branded-types-in-typescript"),
+  badCard("Branded Types",
+    ["Primitive Obsession","Curse","ID Mixup","Avoid"],
+    art.primitiveObsession,"💀 ID Confusion","⚠ Silent Mixup",
+    "Accidentally passing one ID where another is expected. The compiler can't distinguish between two string values — they look identical.",
+    "getProduct(userID)<br>// compiles fine — both are string<br>// fails at runtime 💥",
+    '"I thought this was a bell pepper... it was a habanero. Looked identical from outside."')),
+
+pair("Card 7 — Opaque Types / Accidental Forgery",
+  goodCard(7,"Opaque Types","Domain Modeling, Module-level",["Enchantment","Intermediate"],
+    art.passportOffice,"🏛 Factory Only","🔒 Hidden Internal","⚡ Intermediate",
+    "Hide internal representation, force construction through a validated factory function. The type is only constructable one way.",
+    "type ValidEmail = ... // internal only<br>// only exported:<br>createEmail(s: string): ValidEmail | undefined",
+    '"Go to the passport office. You\'ll get your passport. No shortcuts — that\'s the guarantee."',
+    "https://michalzalecki.com/nominal-typing-in-typescript/"),
+  badCard("Opaque Types",
+    ["Accidental Forgery","Curse","Fake Values","Avoid"],
+    art.aliExpress,"💀 Fake Values","⚠ Bypass Validate",
+    "Creating invalid values directly by bypassing validation — since the type is just a primitive alias, anything compiles.",
+    'const email: Email = "not-an-email"<br>// compiles if Email = type Email = string<br>// disaster at runtime 💥',
+    '"Saw a Kawasaki Ninja 400 on AliExpress for $2k. The pictures were convincing. No way that was real."')),
+
+pair("Card 8 — NonEmpty Collections / Empty Collection Crashes",
+  goodCard(8,"NonEmpty Collections","Domain Modeling",["Enchantment","Intermediate"],
+    art.groceryList,"📦 At Least 1","🛡 No Empty","⚡ Intermediate",
+    "Type that guarantees at least one element exists in an Array. No more runtime checks for potentially empty arrays.",
+    "type NonEmptyArray&lt;T&gt; = [T, ...T[]]<br>// or<br>type AtLeast1&lt;T&gt; = { first: T, rest: T[] }",
+    '"Her Majesty sends me to the store. I always buy something anyway — empty list is not an option."',
+    "https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html"),
+  badCard("NonEmpty Collections",
+    ["Empty Collection Crashes","Curse","undefined[0]","Avoid"],
+    art.emptyHat,"💀 undefined[0]","⚠ Reduce Throws",
+    "Accessing first element or reducing without initial value on potentially empty arrays — silently undefined or a thrown error.",
+    "const first = items[0]<br>// undefined if empty 👻<br>items.reduce((a,b) => a + b)<br>// throws if empty 💥",
+    '"You reach in the hat expecting a rabbit. What you thought was there ain\'t."')),
+
+pair("Card 9 — Total Functions / Partial Functions",
+  goodCard(9,"Total Functions","Function-level",["Enchantment","Intermediate"],
+    art.honda,"✅ All Inputs","🛡 No Exceptions","⚡ Intermediate",
+    "Function that returns a value for every possible input. No exceptions, no undefined behavior — predictable for every case.",
+    "divide(a: number, b: PositiveNumber): number<br>// impossible to pass zero",
+    '"Any Honda: Cold? Hot? 50 years old? Starts anyway."',
+    "https://wiki.haskell.org/Partial_functions"),
+  badCard("Total Functions",
+    ["Partial Functions","Curse","Hidden Crashes","Avoid"],
+    art.fastFood,"💀 Hidden Crashes","⚠ Edge Cases",
+    "Functions that throw or crash for some inputs — hidden failure modes not visible in the type signature.",
+    "function divide(a: number, b: number) {<br>  return a / b<br>}<br>// returns Infinity or NaN 💥",
+    '"I added a New Relic dimension and it crashed my whole application?"')),
+
+pair("Card 10 — Smart Constructors / Constructor Exceptions",
+  goodCard(10,"Smart Constructors","Domain Modeling",["Enchantment","Intermediate"],
+    art.amazon,"🏗 Safe Factory","✅ Result Return","⚡ Intermediate",
+    "Factory functions that validate and return Result or Option instead of throwing. Caller always knows if construction can fail.",
+    "const email = Email.create(input)<br>// Result&lt;Email, InvalidEmailError&gt;",
+    '"Smart Constructors are like housing inspectors — what\'s wrong, is it worth buying, and what to fix."',
+    "https://dev.to/gcanti/functional-design-smart-constructors-14nb"),
+  badCard("Smart Constructors",
+    ["Constructor Exceptions","Curse","Unsafe new","Avoid"],
+    art.badClothes,"💀 Hidden Throws","⚠ Unsafe new",
+    "Constructors that throw on invalid input — caller doesn't know from the type signature that it can fail.",
+    'new Email("invalid") // throws 💥<br>// but new Email(input) looks safe<br>// nothing in the signature warns you',
+    '"Whenever I buy from a non-reputable brand, I almost always regret it. Bad stitching. Falling apart."')),
+
+pair("Card 11 — Anti-Corruption Layer / Leaky Abstractions",
+  goodCard(11,"Anti-Corruption Layer","Boundaries/IO, System-level",["Enchantment","Advanced"],
+    art.waterFilter,"🛡 Clean Boundary","✅ Domain Safe","🔥 Advanced",
+    "Translate external/legacy types into your domain types at the boundary. Keep external shapes outside your core.",
+    "const user = toUser(apiResponse)<br>// API shape stays at the edge<br>// domain shape lives inside",
+    '"I take my cousin\'s fashion advice, keep what fits me, discard what doesn\'t. Both valid in their context."',
+    "https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer"),
+  badCard("Anti-Corruption Layer",
+    ["Leaky Abstractions","Curse","API Spread","Avoid"],
+    art.kudzu,"💀 Tight Coupling","⚠ API Spread",
+    "External API shapes spreading through codebase, coupling your domain to third-party structures. Also leads to Shotgun Parsing.",
+    "function processUser(user: APIResponse)<br>// deep in business logic<br>// API changes → everything breaks 💥",
+    '"Other system\'s types are like Kudzu."')),
+
+pair("Card 12 — Pipeline Builder / Fast-Fail Validation Chains",
+  goodCard(12,"Pipeline Builder","Decoders, Validation",["Enchantment","Advanced"],
+    art.aqueduct,"🔗 Collect All","✅ All Errors","🔥 Advanced",
+    "Pattern to build a function for processing data using a series of piped functions. Types ensure the pipeline connects safely.",
+    "Success()<br>  .concat(isPasswordLongEnough(pw))<br>  .concat(isPasswordStrongEnough(pw))<br>  .map(_ => pw)",
+    '"Roman Aqueducts: settling basins slow water to safe speed. Arcades cross rivers. Siphons deliver on incline. Connected, they ensure delivery no matter the terrain."',
+    "https://sporto.github.io/elm-patterns/advanced/pipeline-builder.html"),
+  badCard("Pipeline Builder",
+    ["Fast-Fail Validation Chains","Curse","Stops Early","Avoid"],
+    art.frozenPipe,"💀 First Error Only","⚠ Stops Early",
+    "Imperative or monadic validation often stops at the first failure, so users only see one error at a time.",
+    "if (!name) return Left('name')<br>if (!email) return Left('email')<br>// only the first error returned",
+    '"A chain is only as strong as its weakest link. If all links are weak, it\'s not a strong chain."')),
+
+pair("Card 13 — Typestate / Illegal State Transitions",
+  goodCard(13,"Typestate","State Machines",["Enchantment","Intermediate"],
+    art.roomba,"🔒 Compile-Time","✅ Valid Transitions","⚡ Intermediate",
+    "Encode lifecycle states in types so only valid transitions are possible at compile time. Invalid transitions don't compile.",
+    "type Draft     = { tag: 'Draft' }<br>type Submitted = { tag: 'Submitted' }<br>function submit(d: Draft): Submitted",
+    '"The Roomba: if full power, it cleans. If stuck, it turns around. If low power or full bin, it charges. Clear transitions only."',
+    "https://sporto.github.io/elm-patterns/advanced/flow-phantom-types.html"),
+  badCard("Typestate",
+    ["Illegal State Transitions","Curse","Runtime Only","Avoid"],
+    art.wrongOrder,"💀 Wrong Order","⚠ Runtime Only",
+    "Operations run in the wrong order because lifecycle rules are only enforced by runtime checks, not the type system.",
+    "approve(order)<br>// compiles even when order<br>// is still in Draft state 💥",
+    '"Put food in the oven. 20 minutes later realized I forgot to turn it on."')),
+
+pair("Card 14 — Indexed Types / Currency Mixups",
+  goodCard(14,"Indexed Types","Domain Modeling, Value-level",["Enchantment","Advanced"],
+    art.ruler,"🏷 Type-Tagged","✅ Invariants","🔥 Advanced",
+    "Carry useful facts in type parameters (currency, units, state) so operations preserve invariants at compile time.",
+    "type Money&lt;C&gt; = { amount: number; currency: C }<br>add(usd1, usd2) // ok ✓<br>add(usd1, eur1) // compile error ✓",
+    '"Rulers: inches on one side, metric on the other. Unmistakably clear which system you\'re measuring in."',
+    "https://www.typescriptlang.org/docs/handbook/2/generics.html"),
+  badCard("Indexed Types",
+    ["Currency Mixups","Curse","Silent Mixup","Avoid"],
+    art.currencyMixup,"💀 Silent Mixup","⚠ Wrong Total",
+    "Monetary values with different currencies treated as plain numbers — invalid operations compile and produce silently incorrect totals.",
+    "add({ amount: 10, currency: 'USD' },<br>    { amount: 7,  currency: 'EUR' })<br>// silently mixes currencies 💥",
+    '"My daughter kept getting wrong-sized clothes from AliExpress — their size chart was for a completely different market."')),
+
+pair("Card 15 — Units-of-Measure Types / Unit Mixups",
+  goodCard(15,"Units-of-Measure Types","Value-level",["Enchantment","Intermediate"],
+    art.woodchuck,"📏 Unit-Safe","✅ Dimension Check","⚡ Intermediate",
+    "Encode physical/business units in types to prevent invalid arithmetic across incompatible dimensions.",
+    "type Meters  = number &amp; { _unit: 'm' }<br>type Seconds = number &amp; { _unit: 's' }<br>addMeters(distance, time) // compile error ✓",
+    '"How much wood could a woodchuck chuck, if a woodchuck could chuck wood?"',
+    "https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure"),
+  badCard("Units-of-Measure Types",
+    ["Unit Mixups","Curse","Unit Chaos","Avoid"],
+    art.unitMixup,"💀 Unit Chaos","⚠ Silent Wrong",
+    "Values with different units treated as plain numbers and combined incorrectly — no compile-time protection against dimension errors.",
+    "const bad = distance + time<br>// Meters + Seconds = ???<br>// compiles. silently wrong. 💥",
+    '"Mars Climate Orbiter crashed because one team used metric, another used imperial. $327M mistake."')),
+
+pair("Card 16 — Capability-Based Design / Ambient Authority",
+  goodCard(16,"Capability-Based Design","System-level, API Design",["Enchantment","Advanced"],
+    art.clothesline,"🎯 Explicit Caps","✅ No Surprises","🔥 Advanced",
+    "Pass explicit capabilities (permissions/operations) into functions instead of relying on ambient global authority.",
+    "function registerUser(<br>  sendEmail: SendEmail,<br>  user: User<br>) { ... }",
+    '"You get a glimpse at someone\'s wardrobe looking at the clothes drying on the clothesline."',
+    "https://fsharpforfunandprofit.com/posts/dependencies-3/"),
+  badCard("Capability-Based Design",
+    ["Ambient Authority","Curse","Hidden Effects","Avoid"],
+    art.lightSwitch,"💀 Hidden Effects","⚠ Global Reach",
+    "Code can perform hidden side effects because it can reach global DB/fs/network clients directly.",
+    "// function that should only email users<br>// also mutates billing records 💥<br>// caller had no idea",
+    '"Turned on a light switch and a fan started, a clock turned on, and something beeped."')),
+
+pair("Card 17 — Type Proofs / Unproven Invariants",
+  goodCard(17,"Type Proofs (Assertion Functions)","Value-level, Function-level, Domain Modeling",["Enchantment","Advanced"],
+    art.typeProofs,"🔬 Proven","✅ Compiler Knows","🔥 Advanced",
+    "Use assertion functions to prove runtime predicates to the type system, enabling refined types after checks and composed proofs.",
+    "function assertOrdered(<br>  p: readonly [number, number]<br>): asserts p is OrderedPair {<br>  if (p[0] >= p[1]) throw new Error('Expected a &lt; b')<br>}",
+    '"When you do the math, show your work, and test that work."',
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#assertion-functions"),
+  badCard("Type Proofs (Assertion Functions)",
+    ["Unproven Invariants","Curse","Unsafe Casts","Avoid"],
+    art.unprovenInvariants,"💀 Assumed Only","⚠ Comment-Only",
+    "Code assumes ordering or constraints that are only documented in comments, forcing unsafe casts and brittle logic.",
+    "// assume sorted — trust me bro<br>const [low, high] = tuple<br>// later: tuple reordered above<br>// range check: silently broken 💥",
+    '"The types aren\'t total."')),
+
+pair("Card 18 — Error Algebra / Stringly-Typed Failures",
+  goodCard(18,"Error Algebra — Errors as Values","API Design, System-level",["Enchantment","Intermediate"],
+    art.klingon,"🔖 Named Errors","✅ Recovery Path","⚡ Intermediate",
+    "Model domain errors as discriminated unions with explicit recovery meaning: retry, fix input, escalate, or abort.",
+    "type CheckoutError =<br>  | { tag: 'CardDeclined' }<br>  | { tag: 'InventoryChanged' }<br>  | { tag: 'TransientNetwork'<br>      retryAfterMs: number }",
+    '"We know what is wrong, how to handle it, and some things we can try to remedy."',
+    "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions"),
+  badCard("Error Algebra — Errors as Values",
+    ["Stringly-Typed Failures","Curse","Opaque Errors","Avoid"],
+    art.stringlyFailed,"💀 Opaque Errors","⚠ Guess Recovery",
+    "Generic errors hide cause and recovery strategy, so callers are left guessing what to do next.",
+    "throw new Error('checkout failed')<br>// why? retry? fix input?<br>// escalate? no clue. 🎲",
+    '"Car won\'t start. No lights on the dash. Something broke — no idea why, or what NOT to do."')),
+
+pair("Card 19 — Schema/Codec Single Source of Truth / Schema Drift",
+  goodCard(19,"Schema / Codec Single Source of Truth","Boundaries/IO, Module-level",["Enchantment","Beginner"],
+    art.meetingPoint,"📋 One Schema","✅ Auto-Derived","✦ Beginner",
+    "Define runtime schema once and derive parser, encoder, and static types from it to avoid drift between sources.",
+    "const UserSchema = z.object({<br>  id:    z.string(),<br>  email: z.string().email()<br>})<br>type User = z.infer&lt;typeof UserSchema&gt;",
+    '"Meet me at 6pm EST inside the coffee shop on Baker &amp; George St. One definition. No ambiguity."',
+    "https://zod.dev/"),
+  badCard("Schema / Codec Single Source of Truth",
+    ["Schema Drift","Curse","Type Drift","Avoid"],
+    art.schemaDrift,"💀 Type Drift","⚠ Silent Bugs",
+    "Runtime validators, TypeScript types, and API docs diverge over time and create subtle bugs nobody sees coming.",
+    "// TS type says: email?: string<br>// Parser requires: email (required)<br>// API docs say: e_mail<br>// Which is right? 🤷",
+    '"You said 6?" "Yeah, 6pm, not am." Basic miscommunication. From two separate sources of truth."')),
+
+pair("Card 20 — Property-Based Testing from Types / Example Blind Spots",
+  goodCard(20,"Property-Based Testing from Types","Function-level, Domain Modeling",["Enchantment","Intermediate"],
+    art.qaEngineer,"🎲 100+ Cases","✅ Invariants","⚡ Intermediate",
+    "Generate many test cases from typed generators and assert invariants instead of relying only on hand-picked examples.",
+    "fc.assert(<br>  fc.property(<br>    arbUser,<br>    u => deepEqual(decode(encode(u)), u)<br>  )<br>)",
+    '"A QA Engineer walks into a bar. Orders 0 beers. Orders 99999999. Orders a lizard. Orders -1."',
+    "https://fast-check.dev/"),
+  badCard("Property-Based Testing from Types",
+    ["Example Blind Spots","Curse","Edge Case Miss","Avoid"],
+    art.deadpool,"💀 Edge Case Miss","⚠ Happy Path Only",
+    "Small example-based tests miss edge cases that violate invariants in production — things you never thought to test.",
+    "// Tests pass for ASCII names<br>// but fail for Unicode input<br>// never thought to test that 🤦",
+    '"Deadpool: Shoot... did I leave the stove on?"')),
+
+pair("Card 21 — Option / Maybe Type / Null Pointer Branching",
+  goodCard(21,"Option / Maybe Type","Domain Modeling, Function-level",["Enchantment","Beginner"],
+    art.thaiPlace,"📦 Some | None","✅ Forced Handle","✦ Beginner",
+    "Represent absence explicitly with Some/None instead of null or undefined. Forces callers to handle the Nothing scenario.",
+    "type Option&lt;T&gt; =<br>  | { tag: 'Some', value: T }<br>  | { tag: 'None' }<br>// map and getWithDefault helpers",
+    '"Do you have pork basil today? Maybe they do. If not: popcorn chicken. Absence is handled gracefully."',
+    "https://gcanti.github.io/fp-ts/modules/Option.ts.html"),
+  badCard("Option / Maybe Type",
+    ["Null Pointer Branching","Curse","Null Crash","Avoid"],
+    art.agentSmith,"💀 Null Crash","⚠ Forgotten Check",
+    "null/undefined checks spread across code and are easy to forget in one branch — one missed check crashes everything.",
+    "user.address.city<br>// throws when address is undefined<br>// forgot to check in this branch 💥<br>// user?.address?.city just moves the problem",
+    '"Agent Smith: What good is a phone call if you are unable to speak?"')),
+
+pair("Card 22 — Product Types (Records) / Positional and Parallel Data Bugs",
+  goodCard(22,"Product Types (Records)","Domain Modeling",["Enchantment","Beginner"],
+    art.blueprint,"📋 Named Fields","✅ AND Together","✦ Beginner",
+    "Model data that must exist together with named fields (AND composition). The blueprint of everything.",
+    "type Money = {<br>  amount:   number<br>  currency: Currency<br>}",
+    '"We\'re all made of many parts — a name, where we live, our interests. A Record holds it all together."',
+    "https://en.wikipedia.org/wiki/Algebraic_data_type"),
+  badCard("Product Types (Records)",
+    ["Positional and Parallel Data Bugs","Curse","Positional Bugs","Avoid"],
+    art.positionalBug,"💀 Positional Bugs","⚠ Order Matters",
+    "Loosely related values passed separately, reordered accidentally, or updated inconsistently — the compiler can't help.",
+    "charge(100, 'USD') // correct ✓<br>charge('USD', 100) // compiles 💥<br>// both are valid JS — wrong result",
+    '"100 wat... dollars? pesos? bitcoin? Something broke — where\'s the error and how do I fix it?"')),
+
+pair("Card 23 — Unknown at Boundaries / Any-Typed Boundary Leaks",
+  goodCard(23,"Unknown at Boundaries","Boundaries/IO",["Enchantment","Beginner"],
+    art.badge,"🔒 unknown First","✅ Parse Once","✦ Beginner",
+    "Accept external input as unknown, then parse/narrow once into trusted domain types. Enforces the conversion.",
+    "function parseUser(<br>  input: unknown<br>): Result&lt;User, ParseError&gt;",
+    '"Guests get a temporary badge, but you must register them first. unknown enforces that conversion."',
+    "https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown"),
+  badCard("Unknown at Boundaries",
+    ["Any-Typed Boundary Leaks","Curse","Unsafe any","Avoid"],
+    art.anyLeak,"💀 Unsafe any","⚠ Late Failures",
+    "Untrusted inputs enter the core system without parsing, causing late runtime failures deep in business logic.",
+    "// API payload typed as any<br>// reaches business logic<br>// crashes on missing fields 💥",
+    '"Oh yeah, this random dude I found on the street is with me." — Not safe. Really not safe."')),
+
+pair("Card 24 — Readonly by Default / Incidental Mutation",
+  goodCard(24,"Readonly by Default","Module-level, Function-level",["Enchantment","Intermediate"],
+    art.yin,"🔒 Readonly","✅ Explicit Change","⚡ Intermediate",
+    "Prefer immutable shapes so mutation is explicit and local, reducing aliasing bugs and spooky action at a distance.",
+    "type User = {<br>  readonly id:    UserId<br>  readonly email: Email<br>}",
+    '"You don\'t wake up and \'1\' suddenly equals \'2\'. Immutability is how the universe works — predictable."',
+    "https://www.typescriptlang.org/docs/handbook/2/objects.html#readonly-properties"),
+  badCard("Readonly by Default",
+    ["Incidental Mutation","Curse","Aliasing Bugs","Avoid"],
+    art.counterStrike,"💀 Aliasing Bugs","⚠ Spooky Action",
+    "Shared object references mutated unexpectedly, causing non-local bugs and flaky behavior nobody can trace.",
+    "// helper function mutates user.roles<br>// breaks permission checks elsewhere<br>// nobody saw it coming 👻",
+    '"CounterStrike: zoom in and the camera moved through the wall. Mutation = danger."')),
+
+pair("Card 25 — Railway-Oriented Programming / Nested Error Handling",
+  goodCard(25,"Railway-Oriented Programming","Function-level, API Design",["Enchantment","Intermediate"],
+    art.railway,"🛤 Two Tracks","✅ Composable","⚡ Intermediate",
+    "Compose Result/Maybe steps left-to-right — stop at first failure, continue on success. Two tracks: green and red.",
+    "parse(input)<br>  .andThen(validate)<br>  .andThen(save)<br>  .andThen(sendWelcomeEmail)",
+    '"Expect the worst, hope for the best."',
+    "https://fsharpforfunandprofit.com/rop/"),
+  badCard("Railway-Oriented Programming",
+    ["Nested Error Handling","Curse","Nested Hell","Avoid"],
+    art.nestedIf,"💀 Nested Hell","⚠ Hard to Read",
+    "if/else + try/catch chains become hard to read and easy to break as the number of steps grows.",
+    "if (ok1) {<br>  if (ok2) {<br>    try { ... } catch { ... }<br>  } else { ... }<br>} else { ... }",
+    '"So many submerged rocks in a frothing sea, near a lighthouse. No one will rescue you."')),
+
+];
+
+document.write(cards.join(''));
+
+// ── QR Code generation ───────────────────────────────────────────
+const qrUrls = [
+  {id:1,  url:"https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/"},
+  {id:2,  url:"https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions"},
+  {id:3,  url:"https://www.youtube.com/watch?v=IcgmSRJHu_8"},
+  {id:4,  url:"https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking"},
+  {id:5,  url:"https://github.com/supermacro/neverthrow"},
+  {id:6,  url:"https://egghead.io/blog/using-branded-types-in-typescript"},
+  {id:7,  url:"https://michalzalecki.com/nominal-typing-in-typescript/"},
+  {id:8,  url:"https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html"},
+  {id:9,  url:"https://wiki.haskell.org/Partial_functions"},
+  {id:10, url:"https://dev.to/gcanti/functional-design-smart-constructors-14nb"},
+  {id:11, url:"https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer"},
+  {id:12, url:"https://sporto.github.io/elm-patterns/advanced/pipeline-builder.html"},
+  {id:13, url:"https://sporto.github.io/elm-patterns/advanced/flow-phantom-types.html"},
+  {id:14, url:"https://www.typescriptlang.org/docs/handbook/2/generics.html"},
+  {id:15, url:"https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure"},
+  {id:16, url:"https://fsharpforfunandprofit.com/posts/dependencies-3/"},
+  {id:17, url:"https://www.typescriptlang.org/docs/handbook/2/narrowing.html#assertion-functions"},
+  {id:18, url:"https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions"},
+  {id:19, url:"https://zod.dev/"},
+  {id:20, url:"https://fast-check.dev/"},
+  {id:21, url:"https://gcanti.github.io/fp-ts/modules/Option.ts.html"},
+  {id:22, url:"https://en.wikipedia.org/wiki/Algebraic_data_type"},
+  {id:23, url:"https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown"},
+  {id:24, url:"https://www.typescriptlang.org/docs/handbook/2/objects.html#readonly-properties"},
+  {id:25, url:"https://fsharpforfunandprofit.com/rop/"},
+];
+
+function generateQR() {
+  qrUrls.forEach(item => {
+    const el = document.getElementById('qr-' + item.id);
+    if (!el) return;
+    el.innerHTML = '';
+    try {
+      new QRCode(el, {
+        text: item.url,
+        width: 46, height: 46,
+        colorDark: '#111111',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } catch(e) {
+      el.textContent = 'QR';
+      el.style.fontSize = '7px';
+    }
+  });
+}
+
+if (document.readyState === 'complete') {
+  setTimeout(generateQR, 400);
+} else {
+  window.addEventListener('load', () => setTimeout(generateQR, 400));
+}
+</script>
+</body>
+</html>
