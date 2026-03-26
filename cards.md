@@ -16,7 +16,7 @@
 | **When to Apply** | Boundaries/IO |
 | **Learn More** | https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/ |
 <img src="images/card1-front.png" />
-<img src="images/card1-frontb.png" />
+<img src="images/card1-front-b.png" />
 
 ### BACK (Problem)
 
