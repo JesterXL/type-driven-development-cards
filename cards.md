@@ -110,7 +110,7 @@
 | **Visual Metaphor** | You left the house with your wallet, phone, purse, laptop, jacket, but forget your keys. You did the pre-flight check, but didn't notice you're low on fuel. You backpack to go camping didn't have any freeze dried food. You bought groceries and got all the ingredients you need for soup, but forgot to get a can opener. |
 | **Example** | `type Request = { status: string, data?: User, error?: string } switch (request.status) { case 'loading': ...; case 'success': ... }` — added `'cancelled'` but forgot to handle it. |
 
-<img style="width: 640px;" src="images/card-04-front.png" />
+<img style="width: 640px;" src="images/card-04-back.png" />
 
 ---
 
