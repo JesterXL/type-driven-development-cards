@@ -16,7 +16,6 @@
 | **When to Apply** | Boundaries/IO |
 | **Learn More** | https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/ |
 <img src="images/card1-front.png" />
-<img src="images/card1-front-b.png" />
 
 ### BACK (Problem)
 
@@ -100,6 +99,8 @@
 | **When to Apply** | Domain modeling, State machines |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking |
 
+<img src="images/card4-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -108,6 +109,8 @@
 | **Description** | Adding a new string status and missing handlers in switch statements, discovered only at runtime. |
 | **Visual Metaphor** | You left the house with your wallet, phone, purse, laptop, jacket, but forget your keys. You did the pre-flight check, but didn't notice you're low on fuel. You backpack to go camping didn't have any freeze dried food. You bought groceries and got all the ingredients you need for soup, but forgot to get a can opener. |
 | **Example** | `type Request = { status: string, data?: User, error?: string } switch (request.status) { case 'loading': ...; case 'success': ... }` — added `'cancelled'` but forgot to handle it. |
+
+<img src="images/card4-front.png" />
 
 ---
 
@@ -125,6 +128,8 @@
 | **When to Apply** | Boundaries/I/O, API design |
 | **Learn More** | https://github.com/supermacro/neverthrow |
 
+<img src="images/card5-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -133,6 +138,8 @@
 | **Description** | `try/catch` doesn't tell you what can fail from the type signature. Exceptions bypass the type system entirely. Error type also tells you how to recover if possible, e.g. `ValidationError`: user can fix input. `Throttled`: retry/backoff is valid. `Unknown`: unrecoverable here; escalate/fail fast. |
 | **Visual Metaphor** | You know that scene in Star Wars where the Millenium Falcon can't go to Light Speed to escape and there's zero indication as to why and everyone gets all stressed out? You know those people who go camping with blanket and sneakers and it's like "Dude, what if it rains? Are you preprared at all?" Imagine someone texting you "I have a problem", but... then they don't respond. Do they need help now? Are they ok, just dealing with deciding what to watch on Netflix? You know when the power goes out... is it ever going to come back on? If so, when? Bottom line, you have to guess at what's wrong when something bad happens, often with no hint at what to try to fix the situation. |
 | **Example** | `function getUser(id: string): User` — throws `NotFoundError`? `ValidationError`? `DatabaseError`? Who knows! Have to read the code and write unit tests in case code stops throwing error you may want to recover from. |
+
+<img src="images/card5-back.png" />
 
 ---
 
@@ -150,6 +157,9 @@
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://egghead.io/blog/using-branded-types-in-typescript |
 
+<img src="images/card6-front.png" />
+<img src="images/card6-front-b.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -158,6 +168,8 @@
 | **Description** | Accidentally passing one ID where another is expected. Compiler can't distinguish between two `string` values. |
 | **Visual Metaphor** | "I thought this was a water, but it was Perrier, blech!" I thought this was a Bell Pepper, but it was a Habanero! All these eggs looked good, but I cracked one open, and it was spoiled (... there's the food thing again). I saw a stack of shirts, all my size, grabbed one... and of course it was the one with a hole in it. |
 | **Example** | Accidentally passing a `userID` to `getProduct(userID)` compiles fine but fails at runtime — both are just `string` |
+
+<img src="images/card6-back.png" />
 
 ---
 
@@ -176,6 +188,8 @@
 | **When to Apply** | Domain modeling, Module-level |
 | **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
 
+<img src="images/card7-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -184,6 +198,8 @@
 | **Description** | Creating invalid values directly by bypassing validation, since the type is just a primitive alias. |
 | **Visual Metaphor** | I once saw a Kawasaki Ninja 400 for sale on Ali Express. The price was like $2,000 less than a new one (normally $5,000/18,000 PLN). The pictures were convincing, and I WAS tempted, but no way that was real. No way to return it either. Not using Opaque types results in fakes, disappointment, or well intended, but ended up doing the wrong thing. (More food) when kids make you a mud pie... or ... just cook for you in general, it's usually a disaster. Cute, but ... bad.   |
 | **Example** | `const email: Email = "not-an-email"` — compiles if `Email` is just `type Email = string` |
+
+<img src="images/card7-back.png" />
 
 ---
 
@@ -201,6 +217,8 @@
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html |
 
+<img src="images/card8-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -209,6 +227,8 @@
 | **Description** | Accessing first element or reducing without initial value on potentially empty arrays. |
 | **Visual Metaphor** | You know how magicians pull a rabbit out of a hat? This would be you go in the hat... and what you thought was there ain't. You how you get a check back sometimes from companies (you overpaid or they give you a tax credit or whatever) and it's for a paltry amount... like 1 cent? Imagine getting one for $0 / 0zł. Like... thanks for the check, I guess? |
 | **Example** | `const first = items[0]` — `undefined` if empty; `items.reduce((a, b) => a + b)` — throws if empty |
+
+<img src="images/card8-back.png" />
 
 ---
 
@@ -227,6 +247,8 @@
 | **When to Apply** | Function-level |
 | **Learn More** | https://wiki.haskell.org/Partial_functions |
 
+<img src="images/card9-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -236,6 +258,8 @@
 | **Visual Metaphor** | I always think of those fast food commercials / photos where they show this amazing burger, and people take a picture of the real thing and it's just NOT even remotely similiar. There's this vibe of "fake" or "exagerating your capabilities". Yes, in normal circumstances, Green Arrow could fight off most villians, but Darkseid? No, another level. You'd need someone like Superman to handle something of that maginitude; partial functions "work in most happy path scenarios", but they're lying about their capabilities. For example, divide says "Yo, I can divide for you" but if you give it a 0 it's all like "Here's Infinity"... like how is that even helpful? Going back to the Honda metaphor, or even Toyota, you buy a Toyata Tacoma, that thing will do everything and last forever. You buy a Cybertruck... I mean, yes, it'll get you from Point A to Point B, but he quality is meh, and it's capabilities ain't all that. It's billed as something rivaling a Ford 150, but... you'll end up breaking it. I'm not sure if "cheap imitation" is a good metaphor; partial functions run our digital world, no doubt, but ...not on airplane software, nor medical software, or _most_ rockets. You want to sure that thing always works or fails for all possible scenarios. Partial Functions don't, and once you learn about Total Functions, you suddenly realize all of those functions have been lying to you for years; not maleovent, mind you, but still not solid engineering by any stretch. |
 | **Quote** | I added a New Relic dimension and it crashed my whole application? |
 | **Example** | `function divide(a: number, b: number): number { return a / b }` — returns `Infinity` or `NaN` for edge cases. |
+
+<img src="images/card9-back.png" />
 
 ---
 
@@ -253,6 +277,8 @@
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://dev.to/gcanti/functional-design-smart-constructors-14nb |
 
+<img src="images/card10-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -261,6 +287,8 @@
 | **Description** | Constructors that throw on invalid input — caller doesn't know from type signature that it can fail. |
 | **Visual Metaphor** | Whenever I buy clothes from a non-good brand, I almost always regret it. The stiching is bad, or I think the shirt looks cool online, but in person it's just cheap, or already falling apart. My daughter had to learn the hard way on both Roblox purchases as well on Ali Express, there are nuermous scams, so you have to vigilant. NOT being vigilant or careful or caring about quality is what leads to constructor exceptions. "Oh, this email some random person typed into a web form is fine... BOOM!" |
 | **Example** | `new Email("invalid")` throws — but `new Email(input)` looks safe in the code |
+
+<img src="images/card10-back.png" />
 
 ---
 
@@ -278,6 +306,8 @@
 | **When to Apply** | Boundaries/IO, System-level |
 | **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
 
+<img src="images/card11-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -287,6 +317,8 @@
 | **Visual Metaphor** | Me in high school. I only liked some music or wore specific music shirts to fit in with a specific friend group. For example, I did like Alice and Chains and Pearl Jam, but... only liked Dinosaur Jr because this girl I liked raved about their albums. I... liked their music, but hated their singer. I only listened to Sonic Youth to annoy my parents. Another angle is the "jury rig" fix. For example, most modern vehicles (cars, motorcycles) have water that goes into the engine, then comes out carrying heat, the disapates that heat near the radiator, then goes back in cold again; this is how it keeps the engines cool. If that tube hits a rock or gets damnaged and starts leaking, most engines won't work without that heat disappation system. So what I've seen people do is use duct tape to quikly fix it. That is SUPER awesome for like an hour to the next car parts store... but not for weeks on end? Same for my sink; we have the handle on it break, so I added some super glue until I had time to go the hardware store. Except I forgot, and my daughter and wife here so ticked off it kept breaking. Not fixing things properly, and just jury rigging a fix leads to all kinds of other problems, ecspecially if you keep doing that like all over the car or house. |
 | **Quote** | Other system's types are like Kudzu. |
 | **Example** | `function processUser(user: APIYouDontOwnResponse)` used deep in business logic — API changes, everything breaks. Their messy data makes your code messy. Data in Python snake case (e.g. `first_name`)? Now used in your `cameCase` code base making it harder to read. |
+
+<img src="images/card11-back.png" />
 
 ---
 
@@ -305,6 +337,9 @@
 | **When to Apply** | Decoders, Validation |
 | **Learn More** | https://sporto.github.io/elm-patterns/advanced/pipeline-builder.html |
 
+<img src="images/card12-front-a.png" />
+<img src="images/card12-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -314,6 +349,8 @@
 | **Visual Metaphor** | The opposite; plastic pipes used in northern, frigid climates that burst when it gets too cold. I live in the South which is shielded from the extreme cold, but even my house occasionally can be affected by it; we have our AC / heater in the attik. When both run, it sheds water; that water goes into a pool, and a pump pushes it out of the house. When it gets below 12F/-11C for longer than a day, the rubber pipes can fresh, and your heater turns off to prevent flooding your house. You have to use a hair dryer to make it work again, or pile insulation on the pipes like I did. One weak link in the chain can make the entire system not work... and even then you don't know if anything else is affected. For example, one year I fixed the attic... then found out the pipe outside the house was frozen too! The ice was like 30ft tall in the pipe; we had to pour hot water on the bottom pipe outside to allow the water to fall out of the house pipe. Another example is the DMV (Depart of Motor Vehicles), I sure hope you don't have that in Poland. You go there, and are missing some stupid form, or filled out the wrong thing, you have to spend yet another 2 hours getting a new appointment or dealing with people who won't help you or are just rude/angry, and its' frustrating not knowing ahead of time the 13 wonky steps you're suppposed to magically know about. |
 | **Quote** | A chain is only as strong as its weakest link. If all links are weak, its not a strong chain. |
 | **Example** | `if (!name) return Left('name'); if (!email) return Left('email');` — only the first error is returned. |
+
+<img src="images/card12-back.png" />
 
 ---
 
@@ -332,6 +369,8 @@
 | **When to Apply** | State machines |
 | **Learn More** | https://sporto.github.io/elm-patterns/advanced/flow-phantom-types.html |
 
+<img src="images/card13-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -340,6 +379,8 @@
 | **Visual Metaphor** | Operations run in the wrong order because lifecycle rules are only enforced by runtime checks. |
 | Most machines nowadays don't allow this, but I've seen a few. Examples are when you turn the hair dryer on and it's accientally in full blast and you want it on low. Or you turn on the car and accidentally left the volume to max and you're like "AHHHHH", or you're driving a car/motorcycle with a clutch and you let it all out while in gear, but no acceleration and it shuts off the engine. Or you put food in the oven, and 20 minutes later realize you didn't turn the oven on (you set the tempature but forgot to hit start). You know how you submit an empty form and it's like "Hey, all 30 of these fields are wrong and now red"; like... why did you let me submit something blank, bruh? You ever hit an elevator button like a millisecond before an elevator in front of you is closing, and it suddenly reopens and everyone inside is like "Hey, jerk!"... like why did it not just ignore me at halfway? Making Matzo ball soup, but forgetting to mix the eggs, and now you have yolk and powder and you're like "ugh, this'll be a pain to stir". |
 | **Example** | `approve(order)` compiles even when `order` is still draft |
+
+<img src="images/card13-back.png" />
 
 ---
 
@@ -371,6 +412,8 @@ add(usd1, usd2); // ok
 | **When to Apply** | Domain modeling, Value-level |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/generics.html |
 
+<img src="images/card14-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -379,6 +422,8 @@ add(usd1, usd2); // ok
 | **Description** | Monetary values with different currencies are treated as plain numbers, so invalid operations compile and produce incorrect totals. |
 | **Visual Metaphor** | My youngest daughter kept getting clothes the wrong size from Ali Express because their American size was actually mapped to like Thailand sizes somehow (or she forgets Americans are... unfortuntely too big on average). She was a 6, but realized from specific Asian brands she had to convert the sizes based on measurements; each brand on their site has a size converter that is NOT correct. She had to use a ruler to convert, else many of the clothes just wouldn't fit. (She had a lot of returns). We constantly had to redo this, too because she started remembering "yeah, this brand is wayyy smaller than they say they are" and "this brand is fine, but for whatever reason their skirts are 1 American size smaller". |
 | **Example** | `add({ amount: 10, currency: 'USD' }, { amount: 7, currency: 'EUR' })` silently mixes currencies without conversion |
+
+<img src="images/card14-back.png" />
 
 ---
 
@@ -416,7 +461,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | Value-level |
 | **Learn More** | https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure |
 
-
+<img src="images/card15-front.png" />
 
 ### BACK (Problem)
 
@@ -427,6 +472,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | Same as currency. |
 | **Example** | <pre><code>// const bad = addMeters(distance, time);
 //            ^ Type error: Seconds is not assignable to Meters</code></pre> |
+
+<img src="images/card15-back.png" />
 
 ---
 
@@ -445,6 +492,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | System-level, API design |
 | **Learn More** | https://fsharpforfunandprofit.com/posts/dependencies-3/ |
 
+<img src="images/card16-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -454,6 +503,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | There are 2 things here, but I wouldn't stress being able to visualize both. The first is you know how you turn on a light switch that "turns power on for the room"? You were expecting it to turn a light on, but suddenly a clock turns on, an fan starts spinning, and you hear a random beep. My favorite (not really) is when I used to travel for work; I'd get into some random hotel, turn on the bath tub, and my head would get blasted with water from the shower. I swear even in 2026 we still don't have a standard on how to switch "tub to shower head". You ever buy soda/a coke, get home, open it, and it explodes all over your kitchen because you didn't know it had been shaken on the ride home? It was supposed to be simple, but now you're cleaning up a disaster in the kitchen. Ok, so that's the first, the 2nd is more about layered dependencies. For example, we were going on an errand with my kids once, and the wife says "Bring a paper towel" and I'm like "uh... ok... why?" and she's like "for the dance" and I'm like "When I was a kid, we typically dressed up and danced, we didn't chow down on messy food and assume the school wouldn't provide napkins". The wife is like "wtf are you talking about, it's for the boy" and I'm like "The boy... what in the heck are you ... talking... about..." and she's like "Ssh, we have to whisper! Your daughter wants to impress the boy" and I'm like "oh you mean that one dude she likes?" and she's like "Ssh! Yes" and I'm like "so what does... a ... paper towel have to do with that" and she's like "for the lipstick, you dummy! She needs to blot it" and I'm like "geez, that was complicated... ok". Like I said, layers. It's clear to the wife, but to me I'm like "wait, there are levels here I need to understand...". |
 | **Quote** | Turned on a light switch and a fan started, a clock turned on, and something beeped. |
 | **Example** | A function that should only email users also mutates billing records. Also `function getUsers(fetch)` now requires all fucntions that use `getUsers` to also supply `fetch` in their dependencies, even if they don't ever actually use the `fetch`. |
+
+<img src="images/card16-back.png" />
 
 ---
 
@@ -472,6 +523,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Level** | Advanced |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#assertion-functions |
 
+<img src="images/card17-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -481,6 +534,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | The types aren't total. |
 | **Quote** | The types aren't total. |
 | **Example** | A tuple is assumed sorted, but later code reorders it and breaks range checks. |
+
+<img src="images/card17-back.png" />
 
 ---
 
@@ -500,6 +555,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | API design, System-level, Discriminated Unions |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
+<img src="images/card18-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -508,6 +565,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | Generic errors hide cause and recovery strategy, so callers guess what to do next. |
 | **Visual Metaphor** | If you're like me and your car won't start and no lights on the dash show anything... this is what that means. "Something broke, we have no idea why, or what to do... or NOT to do, to fix it". For example, if you're buying something, and your credit card doesn't work... usually you get a text saying "suspicious transaction"; you call your bank, voila, it works. But if it doesn't work, and the bank says its fine... WHY IS MY CARD NOT WORKING!? I remember some friends, we went to their house for dinner. Their dog ran out the front door... and ... they just said... "I guess she's gone". The wife and I were like "wat?" so we went driving around the neihborhood they lived in, found the dog, brought it back. That kind of "something's wrong... I guess we're helpless" is the opposite end of this; something went wrong, but nothing you can do other than say "woe is me". Another idea is when people get advanced / alien technology in movies, and they go to use it at some pivotal moment and it doesn't work and they're like "wat? oh no..." |
 | **Example** | `throw new Error("checkout failed")` |
+
+<img src="images/card18-back.png" />
 
 ---
 
@@ -525,6 +584,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | Boundaries/I/O, Module-level |
 | **Learn More** | https://zod.dev/ |
 
+<img src="images/card19-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -533,6 +594,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | Runtime validators, TypeScript types, and API docs diverge over time and create subtle bugs. |
 | **Visual Metaphor** | Basic miscommunication. "You said 6?" "Yeah, 6pm, not am". A common one that happens all the time is Python people saying `first_name` (snake case) and JavaScript people saying `firstName` (camel case). |
 | **Example** | Type says `email?`, parser requires `email` |
+
+<img src="images/card19-back.png" />
 
 ---
 
@@ -550,6 +613,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | Function-level, Domain modeling |
 | **Learn More** | https://fast-check.dev/ |
 
+<img src="images/card20-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -559,6 +624,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | Like the "divide by 0", you can miss things. The type "says" number, but that could be not a real number like 0 / 0, or 12 / 0 which is infinity... rather than just remember that, it's easier to use property tests to find all these edge cases you didn't think about. "My house has 12 doors... did I lock them all?" or that one time Deadpool was fighting 12 army dudes and he's like "Oh god... did I leave the oven on!?" |
 | **Quote** | Deadpool: "Shoot... did I leave the stove on?" |
 | **Example** | Tests pass for ASCII names but fail for Unicode input |
+
+<img src="images/card20-back.png" />
 
 ---
 
@@ -578,6 +645,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Helpers like `map` and `getWithDefault` to avoid null checks. |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/Option.ts.html |
 
+<img src="images/card21-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -587,6 +656,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | Imagine meeting someone with no name. That would make your head explode. That only works with that dude in Game of Thrones. I say computers have `null` and make it explode, but some languages will have some people actively check for it first; e.g. "If this isn't null, then keep doing more code". This, however, makes your entire code base gross because you're constantly paranoid that at any point, your data is foobarred. Image taking a walk to the park, but you are all paranoid it might snow, rain, or lava or asteroids from the sky... then while walking, you have your shotgun all looking around in case wolves jump out at you... then ensuring you have enough money for the ice cream truck, which doesn't usually come today... like that's no way to live, man. I listened to an AI YouTube once that I think was a cut up lecture from Richard Feynman that said "Actually, nothing doesn't actually exist" which ... is quite amazing from a philosophical stand point, but in programming & math it most certainly does, and we're forced to handle it. When we ignore it, things explode/go boom in computer land. |
 | **Quote** | Agent Smith "What good is a phone call if you are unable to speak?" |
 | **Example** | `user.address.city` throws when `address` is `undefined` // forgot to chek in this branch 💥 // could use user?.address?.city // but then someone else // deals with the null  |
+
+<img src="images/card21-back.png" />
 
 ---
 
@@ -607,6 +678,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Structural validation for required fields at boundaries. |
 | **Learn More** | https://en.wikipedia.org/wiki/Algebraic_data_type |
 
+<img src="images/card22-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -615,6 +688,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | Loosely related values are passed separately, reordered accidentally, or updated inconsistently. |
 | **Visual Metaphor** | When people don't model things, they say "100" and you're like "100 wat... dollars... peso's... bitcoin...?". Same for when things break, they'll say "It broke", but then you have to look somewhere else for _why_ it broke. Records are nice because they contain all the data, like "100 USD dollars" or "it broke, here's the error, and here's what you should try to fix it". |
 | **Example** | `charge(100, "USD")` vs `charge("USD", 100)` |
+
+<img src="images/card22-back.png" />
 
 ---
 
@@ -634,6 +709,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Schema validators/codecs (Zod, io-ts, valibot). |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown |
 
+<img src="images/card23-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -642,6 +719,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | Untrusted inputs enter the core system without parsing, causing late runtime failures. |
 | **Visual Metaphor** | The alternative is `any`; meaning, no badges, no forced conversions, you just go "Oh yeah, this random dude I found on the street is with me". That's... not safe. Like, I can emphasize this enough, it's really convienant, no doubt, but super dangerous. |
 | **Example** | API payload typed as `any` reaches business logic and crashes on missing fields |
+
+<img src="images/card23-back.png" />
 
 ---
 
@@ -661,6 +740,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Copy-on-write updates and immutable helpers. |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/objects.html#readonly-properties |
 
+<img src="images/card24-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -669,6 +750,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | Shared object references are mutated unexpectedly, causing non-local bugs and flaky behavior. |
 | **Visual Metaphor** | You know in video games how things can change, like your score, or how zoomed you with a sniper rifle? This is fast and easy to do, but also dangerous. For example, there used to be a bug in CounterStrike where you could zoom in and it'd allow you to see through walls because the camera in the game physically moved _through_ the wall. The other players couldn't see your character through the wall, but what you saw on your screen was your sniper rifle's scope seeing players through walls. Same with various "infinite gold" or items glitches, like in Dying Light where a player gives you an item, but they close the window before it finishes transfering. If you get the item, normally it'd mutate your amount by negative 1... but if you close the window, you get a few, new thing, but the other player keeps their copy. Mutation/changing things is dangerous. |
 | **Example** | A helper function mutates `user.roles` and breaks permission checks elsewhere |
+
+<img src="images/card24-back.png" />
 
 ---
 
@@ -689,6 +772,8 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | `neverthrow` `Result/ResultAsync` with `.andThen`, `.map`, `.mapErr`. |
 | **Learn More** | https://fsharpforfunandprofit.com/rop/ |
 
+<img src="images/card25-front.png" />
+
 ### BACK (Problem)
 
 | Field | Content |
@@ -697,5 +782,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Description** | `if/else` + `try/catch` chains become hard to read and easy to break as steps grow. |
 | **Visual Metaphor** | This one is easy too. If you you look up the Ryu hadoken punch if then statements, you'll see how they nest to the right, and it's so hard to read. It's not so much the "nest", it's just that it's hard to follow. You know how maps sometimes have a bunch of roads overlapping in the same color and you're like "dude, I'm getting lost". You need to follow the threads because you need to figure out where the errors are. I tend to think of it like sailing a boat in waters near a lighthouse; there are so many submerged or small rocks hard to see a frothing sea, and in those conditions, no one is going to rescue you.  |
 | **Example** | `if (ok1) { if (ok2) { try { ... } catch { ... } } else { ... } } else { ... }` |
+
+<img src="images/card25-back.png" />
 
 ---
