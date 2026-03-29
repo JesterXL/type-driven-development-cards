@@ -158,7 +158,6 @@
 | **Learn More** | https://egghead.io/blog/using-branded-types-in-typescript |
 
 <img style="width: 640px;" src="images/card-06-front.png" />
-<img style="width: 640px;" src="images/card-06-front-b.png" />
 
 ### BACK (Problem)
 
@@ -337,7 +336,6 @@
 | **When to Apply** | Decoders, Validation |
 | **Learn More** | https://sporto.github.io/elm-patterns/advanced/pipeline-builder.html |
 
-<img style="width: 640px;" src="images/card-12-front-a.png" />
 <img style="width: 640px;" src="images/card-12-front.png" />
 
 ### BACK (Problem)
