@@ -15,7 +15,7 @@
 | **Level** | Beginner |
 | **When to Apply** | Boundaries/IO |
 | **Learn More** | https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/ |
-<img src="images/card1-front.png" />
+<img src="images/card-01-front.png" />
 
 ### BACK (Problem)
 
@@ -25,7 +25,7 @@
 | **Description** | Validation logic scattered throughout codebase, checking the same fields repeatedly in different places, only checking the fields a function/method needs, inconsistent handling of invalid data. |
 | **Visual Metaphor** | Paranoid. Many parts could look good yet 1 part could be broken. When something is "off", you don't verify anything else, just rejection. One wrong piece of data, and boom, entire program crashes. Every single step is this terrifying, check each section before you walk. Like walking on a thinly frozen lake or one of those rickety rope bridges in Indian Jones and The Temple of Doom. |
 | **Example** | `if (json.name && typeof json.name !== 'string') { throw new Error('Name is needs to be a string') }` repeated in 5 different files. What about `json.email` or other fields? At any point of the code, bad data on just 1 field can crash the application. |
-<img src="images/card1-back.png" />
+<img src="images/card-01-back.png" />
 ---
 
 ## Card 2
@@ -42,7 +42,7 @@
 | **When to Apply** | Domain modeling, State Machines |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
-<img src="images/card2-front.png" />
+<img src="images/card-02-front.png" />
 
 ### BACK (Problem)
 
@@ -53,7 +53,7 @@
 | **Visual Metaphor** | Like a sticky note you left for yourself, but it's vague or doesn't describe exacly why you left the note. Like "Remember to do the thing"... what thing? Missing context. You call FedEx/UPS "Did you ship my package?" "No". "Uh... ok, what's the status of it? Waiting for label... waiting for pickup... shipped... in customs... in cross dock... in a plane... on truck... at my doorstep???" "No" "Dude, that's not helpful... what does 'no' mean?" |
 | **Example** | `process(true, {}, undefined)` — caller must remember what `true` means, often having to read the function/method contents to understand. |
 
-<img src="images/card2-back.png" />
+<img src="images/card-02-back.png" />
 ---
 
 ## Card 3
@@ -70,7 +70,7 @@
 | **When to Apply** | Domain modeling, State machines |
 | **Learn More** | https://www.youtube.com/watch?v=IcgmSRJHu_8 |
 
-<img src="images/card3-front.png" />
+<img src="images/card-03-front.png" />
 
 ### BACK (Problem)
 
@@ -81,7 +81,7 @@
 | **Visual Metaphor** | Imagine getting an empty box from FedEx, "Yes, I got my pacakge, but... the box didn't have the clothes I ordered inside it?" In America, they have these hexagon red signs that say "STOP". If they were green, but still said "STOP", Americans would probably crash into each other. In America, we have stop lights that go from red (stop), yellow (prepare to stop), and green (go). If it was red and green at the same time... I'd have no idea what to do. I'd probably try to go, but... only if others were stopped maybe? |
 | **Example** | `type Request = { loading: boolean, data?: User, error?: string }` — what does `{ loading: true, data: someUser, error: "failed" }` mean? |
 
-<img src="images/card3-back.png" />
+<img src="images/card-03-back.png" />
 
 ---
 
@@ -99,7 +99,7 @@
 | **When to Apply** | Domain modeling, State machines |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking |
 
-<img src="images/card4-front.png" />
+<img src="images/card-04-front.png" />
 
 ### BACK (Problem)
 
@@ -110,7 +110,7 @@
 | **Visual Metaphor** | You left the house with your wallet, phone, purse, laptop, jacket, but forget your keys. You did the pre-flight check, but didn't notice you're low on fuel. You backpack to go camping didn't have any freeze dried food. You bought groceries and got all the ingredients you need for soup, but forgot to get a can opener. |
 | **Example** | `type Request = { status: string, data?: User, error?: string } switch (request.status) { case 'loading': ...; case 'success': ... }` — added `'cancelled'` but forgot to handle it. |
 
-<img src="images/card4-front.png" />
+<img src="images/card-04-front.png" />
 
 ---
 
@@ -128,7 +128,7 @@
 | **When to Apply** | Boundaries/I/O, API design |
 | **Learn More** | https://github.com/supermacro/neverthrow |
 
-<img src="images/card5-front.png" />
+<img src="images/card-05-front.png" />
 
 ### BACK (Problem)
 
@@ -139,7 +139,7 @@
 | **Visual Metaphor** | You know that scene in Star Wars where the Millenium Falcon can't go to Light Speed to escape and there's zero indication as to why and everyone gets all stressed out? You know those people who go camping with blanket and sneakers and it's like "Dude, what if it rains? Are you preprared at all?" Imagine someone texting you "I have a problem", but... then they don't respond. Do they need help now? Are they ok, just dealing with deciding what to watch on Netflix? You know when the power goes out... is it ever going to come back on? If so, when? Bottom line, you have to guess at what's wrong when something bad happens, often with no hint at what to try to fix the situation. |
 | **Example** | `function getUser(id: string): User` — throws `NotFoundError`? `ValidationError`? `DatabaseError`? Who knows! Have to read the code and write unit tests in case code stops throwing error you may want to recover from. |
 
-<img src="images/card5-back.png" />
+<img src="images/card-05-back.png" />
 
 ---
 
@@ -157,8 +157,8 @@
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://egghead.io/blog/using-branded-types-in-typescript |
 
-<img src="images/card6-front.png" />
-<img src="images/card6-front-b.png" />
+<img src="images/card-06-front.png" />
+<img src="images/card-06-front-b.png" />
 
 ### BACK (Problem)
 
@@ -169,7 +169,7 @@
 | **Visual Metaphor** | "I thought this was a water, but it was Perrier, blech!" I thought this was a Bell Pepper, but it was a Habanero! All these eggs looked good, but I cracked one open, and it was spoiled (... there's the food thing again). I saw a stack of shirts, all my size, grabbed one... and of course it was the one with a hole in it. |
 | **Example** | Accidentally passing a `userID` to `getProduct(userID)` compiles fine but fails at runtime — both are just `string` |
 
-<img src="images/card6-back.png" />
+<img src="images/card-06-back.png" />
 
 ---
 
@@ -188,7 +188,7 @@
 | **When to Apply** | Domain modeling, Module-level |
 | **Learn More** | https://michalzalecki.com/nominal-typing-in-typescript/ |
 
-<img src="images/card7-front.png" />
+<img src="images/card-07-front.png" />
 
 ### BACK (Problem)
 
@@ -199,7 +199,7 @@
 | **Visual Metaphor** | I once saw a Kawasaki Ninja 400 for sale on Ali Express. The price was like $2,000 less than a new one (normally $5,000/18,000 PLN). The pictures were convincing, and I WAS tempted, but no way that was real. No way to return it either. Not using Opaque types results in fakes, disappointment, or well intended, but ended up doing the wrong thing. (More food) when kids make you a mud pie... or ... just cook for you in general, it's usually a disaster. Cute, but ... bad.   |
 | **Example** | `const email: Email = "not-an-email"` — compiles if `Email` is just `type Email = string` |
 
-<img src="images/card7-back.png" />
+<img src="images/card-07-back.png" />
 
 ---
 
@@ -217,7 +217,7 @@
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/NonEmptyArray.ts.html |
 
-<img src="images/card8-front.png" />
+<img src="images/card-08-front.png" />
 
 ### BACK (Problem)
 
@@ -228,7 +228,7 @@
 | **Visual Metaphor** | You know how magicians pull a rabbit out of a hat? This would be you go in the hat... and what you thought was there ain't. You how you get a check back sometimes from companies (you overpaid or they give you a tax credit or whatever) and it's for a paltry amount... like 1 cent? Imagine getting one for $0 / 0zł. Like... thanks for the check, I guess? |
 | **Example** | `const first = items[0]` — `undefined` if empty; `items.reduce((a, b) => a + b)` — throws if empty |
 
-<img src="images/card8-back.png" />
+<img src="images/card-08-back.png" />
 
 ---
 
@@ -247,7 +247,7 @@
 | **When to Apply** | Function-level |
 | **Learn More** | https://wiki.haskell.org/Partial_functions |
 
-<img src="images/card9-front.png" />
+<img src="images/card-09-front.png" />
 
 ### BACK (Problem)
 
@@ -259,7 +259,7 @@
 | **Quote** | I added a New Relic dimension and it crashed my whole application? |
 | **Example** | `function divide(a: number, b: number): number { return a / b }` — returns `Infinity` or `NaN` for edge cases. |
 
-<img src="images/card9-back.png" />
+<img src="images/card-09-back.png" />
 
 ---
 
@@ -277,7 +277,7 @@
 | **When to Apply** | Domain modeling |
 | **Learn More** | https://dev.to/gcanti/functional-design-smart-constructors-14nb |
 
-<img src="images/card10-front.png" />
+<img src="images/card-10-front.png" />
 
 ### BACK (Problem)
 
@@ -288,7 +288,7 @@
 | **Visual Metaphor** | Whenever I buy clothes from a non-good brand, I almost always regret it. The stiching is bad, or I think the shirt looks cool online, but in person it's just cheap, or already falling apart. My daughter had to learn the hard way on both Roblox purchases as well on Ali Express, there are nuermous scams, so you have to vigilant. NOT being vigilant or careful or caring about quality is what leads to constructor exceptions. "Oh, this email some random person typed into a web form is fine... BOOM!" |
 | **Example** | `new Email("invalid")` throws — but `new Email(input)` looks safe in the code |
 
-<img src="images/card10-back.png" />
+<img src="images/card-10-back.png" />
 
 ---
 
@@ -306,7 +306,7 @@
 | **When to Apply** | Boundaries/IO, System-level |
 | **Learn More** | https://docs.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer |
 
-<img src="images/card11-front.png" />
+<img src="images/card-11-front.png" />
 
 ### BACK (Problem)
 
@@ -318,7 +318,7 @@
 | **Quote** | Other system's types are like Kudzu. |
 | **Example** | `function processUser(user: APIYouDontOwnResponse)` used deep in business logic — API changes, everything breaks. Their messy data makes your code messy. Data in Python snake case (e.g. `first_name`)? Now used in your `cameCase` code base making it harder to read. |
 
-<img src="images/card11-back.png" />
+<img src="images/card-11-back.png" />
 
 ---
 
@@ -337,8 +337,8 @@
 | **When to Apply** | Decoders, Validation |
 | **Learn More** | https://sporto.github.io/elm-patterns/advanced/pipeline-builder.html |
 
-<img src="images/card12-front-a.png" />
-<img src="images/card12-front.png" />
+<img src="images/card-12-front-a.png" />
+<img src="images/card-12-front.png" />
 
 ### BACK (Problem)
 
@@ -350,7 +350,7 @@
 | **Quote** | A chain is only as strong as its weakest link. If all links are weak, its not a strong chain. |
 | **Example** | `if (!name) return Left('name'); if (!email) return Left('email');` — only the first error is returned. |
 
-<img src="images/card12-back.png" />
+<img src="images/card-12-back.png" />
 
 ---
 
@@ -369,7 +369,7 @@
 | **When to Apply** | State machines |
 | **Learn More** | https://sporto.github.io/elm-patterns/advanced/flow-phantom-types.html |
 
-<img src="images/card13-front.png" />
+<img src="images/card-13-front.png" />
 
 ### BACK (Problem)
 
@@ -380,7 +380,7 @@
 | Most machines nowadays don't allow this, but I've seen a few. Examples are when you turn the hair dryer on and it's accientally in full blast and you want it on low. Or you turn on the car and accidentally left the volume to max and you're like "AHHHHH", or you're driving a car/motorcycle with a clutch and you let it all out while in gear, but no acceleration and it shuts off the engine. Or you put food in the oven, and 20 minutes later realize you didn't turn the oven on (you set the tempature but forgot to hit start). You know how you submit an empty form and it's like "Hey, all 30 of these fields are wrong and now red"; like... why did you let me submit something blank, bruh? You ever hit an elevator button like a millisecond before an elevator in front of you is closing, and it suddenly reopens and everyone inside is like "Hey, jerk!"... like why did it not just ignore me at halfway? Making Matzo ball soup, but forgetting to mix the eggs, and now you have yolk and powder and you're like "ugh, this'll be a pain to stir". |
 | **Example** | `approve(order)` compiles even when `order` is still draft |
 
-<img src="images/card13-back.png" />
+<img src="images/card-13-back.png" />
 
 ---
 
@@ -412,7 +412,7 @@ add(usd1, usd2); // ok
 | **When to Apply** | Domain modeling, Value-level |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/generics.html |
 
-<img src="images/card14-front.png" />
+<img src="images/card-14-front.png" />
 
 ### BACK (Problem)
 
@@ -423,7 +423,7 @@ add(usd1, usd2); // ok
 | **Visual Metaphor** | My youngest daughter kept getting clothes the wrong size from Ali Express because their American size was actually mapped to like Thailand sizes somehow (or she forgets Americans are... unfortuntely too big on average). She was a 6, but realized from specific Asian brands she had to convert the sizes based on measurements; each brand on their site has a size converter that is NOT correct. She had to use a ruler to convert, else many of the clothes just wouldn't fit. (She had a lot of returns). We constantly had to redo this, too because she started remembering "yeah, this brand is wayyy smaller than they say they are" and "this brand is fine, but for whatever reason their skirts are 1 American size smaller". |
 | **Example** | `add({ amount: 10, currency: 'USD' }, { amount: 7, currency: 'EUR' })` silently mixes currencies without conversion |
 
-<img src="images/card14-back.png" />
+<img src="images/card-14-back.png" />
 
 ---
 
@@ -461,7 +461,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | Value-level |
 | **Learn More** | https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/units-of-measure |
 
-<img src="images/card15-front.png" />
+<img src="images/card-15-front.png" />
 
 ### BACK (Problem)
 
@@ -473,7 +473,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Example** | <pre><code>// const bad = addMeters(distance, time);
 //            ^ Type error: Seconds is not assignable to Meters</code></pre> |
 
-<img src="images/card15-back.png" />
+<img src="images/card-15-back.png" />
 
 ---
 
@@ -492,7 +492,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | System-level, API design |
 | **Learn More** | https://fsharpforfunandprofit.com/posts/dependencies-3/ |
 
-<img src="images/card16-front.png" />
+<img src="images/card-16-front.png" />
 
 ### BACK (Problem)
 
@@ -504,7 +504,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Quote** | Turned on a light switch and a fan started, a clock turned on, and something beeped. |
 | **Example** | A function that should only email users also mutates billing records. Also `function getUsers(fetch)` now requires all fucntions that use `getUsers` to also supply `fetch` in their dependencies, even if they don't ever actually use the `fetch`. |
 
-<img src="images/card16-back.png" />
+<img src="images/card-16-back.png" />
 
 ---
 
@@ -523,7 +523,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Level** | Advanced |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#assertion-functions |
 
-<img src="images/card17-front.png" />
+<img src="images/card-17-front.png" />
 
 ### BACK (Problem)
 
@@ -535,7 +535,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Quote** | The types aren't total. |
 | **Example** | A tuple is assumed sorted, but later code reorders it and breaks range checks. |
 
-<img src="images/card17-back.png" />
+<img src="images/card-17-back.png" />
 
 ---
 
@@ -555,7 +555,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | API design, System-level, Discriminated Unions |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/narrowing.html#discriminated-unions |
 
-<img src="images/card18-front.png" />
+<img src="images/card-18-front.png" />
 
 ### BACK (Problem)
 
@@ -566,7 +566,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | If you're like me and your car won't start and no lights on the dash show anything... this is what that means. "Something broke, we have no idea why, or what to do... or NOT to do, to fix it". For example, if you're buying something, and your credit card doesn't work... usually you get a text saying "suspicious transaction"; you call your bank, voila, it works. But if it doesn't work, and the bank says its fine... WHY IS MY CARD NOT WORKING!? I remember some friends, we went to their house for dinner. Their dog ran out the front door... and ... they just said... "I guess she's gone". The wife and I were like "wat?" so we went driving around the neihborhood they lived in, found the dog, brought it back. That kind of "something's wrong... I guess we're helpless" is the opposite end of this; something went wrong, but nothing you can do other than say "woe is me". Another idea is when people get advanced / alien technology in movies, and they go to use it at some pivotal moment and it doesn't work and they're like "wat? oh no..." |
 | **Example** | `throw new Error("checkout failed")` |
 
-<img src="images/card18-back.png" />
+<img src="images/card-18-back.png" />
 
 ---
 
@@ -584,7 +584,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | Boundaries/I/O, Module-level |
 | **Learn More** | https://zod.dev/ |
 
-<img src="images/card19-front.png" />
+<img src="images/card-19-front.png" />
 
 ### BACK (Problem)
 
@@ -595,7 +595,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | Basic miscommunication. "You said 6?" "Yeah, 6pm, not am". A common one that happens all the time is Python people saying `first_name` (snake case) and JavaScript people saying `firstName` (camel case). |
 | **Example** | Type says `email?`, parser requires `email` |
 
-<img src="images/card19-back.png" />
+<img src="images/card-19-back.png" />
 
 ---
 
@@ -613,7 +613,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **When to Apply** | Function-level, Domain modeling |
 | **Learn More** | https://fast-check.dev/ |
 
-<img src="images/card20-front.png" />
+<img src="images/card-20-front.png" />
 
 ### BACK (Problem)
 
@@ -625,7 +625,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Quote** | Deadpool: "Shoot... did I leave the stove on?" |
 | **Example** | Tests pass for ASCII names but fail for Unicode input |
 
-<img src="images/card20-back.png" />
+<img src="images/card-20-back.png" />
 
 ---
 
@@ -645,7 +645,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Helpers like `map` and `getWithDefault` to avoid null checks. |
 | **Learn More** | https://gcanti.github.io/fp-ts/modules/Option.ts.html |
 
-<img src="images/card21-front.png" />
+<img src="images/card-21-front.png" />
 
 ### BACK (Problem)
 
@@ -657,7 +657,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Quote** | Agent Smith "What good is a phone call if you are unable to speak?" |
 | **Example** | `user.address.city` throws when `address` is `undefined` // forgot to chek in this branch 💥 // could use user?.address?.city // but then someone else // deals with the null  |
 
-<img src="images/card21-back.png" />
+<img src="images/card-21-back.png" />
 
 ---
 
@@ -678,7 +678,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Structural validation for required fields at boundaries. |
 | **Learn More** | https://en.wikipedia.org/wiki/Algebraic_data_type |
 
-<img src="images/card22-front.png" />
+<img src="images/card-22-front.png" />
 
 ### BACK (Problem)
 
@@ -689,7 +689,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | When people don't model things, they say "100" and you're like "100 wat... dollars... peso's... bitcoin...?". Same for when things break, they'll say "It broke", but then you have to look somewhere else for _why_ it broke. Records are nice because they contain all the data, like "100 USD dollars" or "it broke, here's the error, and here's what you should try to fix it". |
 | **Example** | `charge(100, "USD")` vs `charge("USD", 100)` |
 
-<img src="images/card22-back.png" />
+<img src="images/card-22-back.png" />
 
 ---
 
@@ -709,7 +709,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Schema validators/codecs (Zod, io-ts, valibot). |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown |
 
-<img src="images/card23-front.png" />
+<img src="images/card-23-front.png" />
 
 ### BACK (Problem)
 
@@ -720,7 +720,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | The alternative is `any`; meaning, no badges, no forced conversions, you just go "Oh yeah, this random dude I found on the street is with me". That's... not safe. Like, I can emphasize this enough, it's really convienant, no doubt, but super dangerous. |
 | **Example** | API payload typed as `any` reaches business logic and crashes on missing fields |
 
-<img src="images/card23-back.png" />
+<img src="images/card-23-back.png" />
 
 ---
 
@@ -740,7 +740,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | Copy-on-write updates and immutable helpers. |
 | **Learn More** | https://www.typescriptlang.org/docs/handbook/2/objects.html#readonly-properties |
 
-<img src="images/card24-front.png" />
+<img src="images/card-24-front.png" />
 
 ### BACK (Problem)
 
@@ -751,7 +751,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | You know in video games how things can change, like your score, or how zoomed you with a sniper rifle? This is fast and easy to do, but also dangerous. For example, there used to be a bug in CounterStrike where you could zoom in and it'd allow you to see through walls because the camera in the game physically moved _through_ the wall. The other players couldn't see your character through the wall, but what you saw on your screen was your sniper rifle's scope seeing players through walls. Same with various "infinite gold" or items glitches, like in Dying Light where a player gives you an item, but they close the window before it finishes transfering. If you get the item, normally it'd mutate your amount by negative 1... but if you close the window, you get a few, new thing, but the other player keeps their copy. Mutation/changing things is dangerous. |
 | **Example** | A helper function mutates `user.roles` and breaks permission checks elsewhere |
 
-<img src="images/card24-back.png" />
+<img src="images/card-24-back.png" />
 
 ---
 
@@ -772,7 +772,7 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Runtime Pair** | `neverthrow` `Result/ResultAsync` with `.andThen`, `.map`, `.mapErr`. |
 | **Learn More** | https://fsharpforfunandprofit.com/rop/ |
 
-<img src="images/card25-front.png" />
+<img src="images/card-25-front.png" />
 
 ### BACK (Problem)
 
@@ -783,6 +783,6 @@ const speed = divideMetersBySeconds(distance, time);``` |
 | **Visual Metaphor** | This one is easy too. If you you look up the Ryu hadoken punch if then statements, you'll see how they nest to the right, and it's so hard to read. It's not so much the "nest", it's just that it's hard to follow. You know how maps sometimes have a bunch of roads overlapping in the same color and you're like "dude, I'm getting lost". You need to follow the threads because you need to figure out where the errors are. I tend to think of it like sailing a boat in waters near a lighthouse; there are so many submerged or small rocks hard to see a frothing sea, and in those conditions, no one is going to rescue you.  |
 | **Example** | `if (ok1) { if (ok2) { try { ... } catch { ... } } else { ... } } else { ... }` |
 
-<img src="images/card25-back.png" />
+<img src="images/card-25-back.png" />
 
 ---
