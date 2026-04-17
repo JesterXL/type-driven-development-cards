@@ -62,7 +62,7 @@ h1{color:#c9a227;font-family:'Cinzel',serif;text-align:center;margin-bottom:6px;
 
 /* Attribution — bad cards only */
 .attribution{display:flex;align-items:center;justify-content:center;gap:4px;padding-top:4px;padding-bottom:6px}
-.attribution .emoji{font-size:10px;opacity:.65;line-height:1}
+.attribution .emoji{font-size:10px;line-height:1}
 .attribution span{font-family:'Cinzel',serif;font-size:7px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#b06060;opacity:.6}
 
 /* QR col — good cards only */
@@ -71,10 +71,6 @@ h1{color:#c9a227;font-family:'Cinzel',serif;text-align:center;margin-bottom:6px;
 .qr-generated canvas,.qr-generated img{width:46px!important;height:46px!important}
 .qr-label{font-family:'Cinzel',serif;font-size:5.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#6b4a10}
 
-/* Corner deco */
-.cdeco{position:absolute;font-size:11px;opacity:.12;pointer-events:none;font-family:serif}
-.cdeco.tl{top:5px;left:7px}.cdeco.tr{top:5px;right:7px}
-.cdeco.bl{bottom:5px;left:7px}.cdeco.br{bottom:5px;right:7px}
 
 /* Print */
 @media print{
@@ -82,7 +78,6 @@ h1{color:#c9a227;font-family:'Cinzel',serif;text-align:center;margin-bottom:6px;
   h1,.subtitle,.pair-label{display:none}
   .card-pair{display:contents}
   .card{width:3in;height:5in;border-radius:0;page-break-after:always;break-after:page;margin:0;box-shadow:none!important;position:relative}
-  .card::before{content:'';position:absolute;top:.125in;left:.125in;right:.125in;bottom:.125in;border:.5pt dashed rgba(0,0,0,.15);pointer-events:none;z-index:999}
   .card-pair:last-child .card:last-child{page-break-after:avoid;break-after:avoid}
   @page{size:3in 5in;margin:0}
 }
@@ -97,8 +92,6 @@ h1{color:#c9a227;font-family:'Cinzel',serif;text-align:center;margin-bottom:6px;
 function goodCard(id, title, when, tags, artSvg, stat1, stat2, level, desc, code, quote, url) {
   return `
   <div class="card good">
-      <span class="cdeco tl">✦</span><span class="cdeco tr">✦</span>
-      <span class="cdeco bl">✦</span><span class="cdeco br">✦</span>
       <div class="card-header">
         <div class="header-top"><div class="title-text">${title}</div><div class="mana-cost">★</div></div>
         <div class="sub-line">✦ When to apply: ${when}</div>
@@ -132,8 +125,6 @@ function goodCard(id, title, when, tags, artSvg, stat1, stat2, level, desc, code
 function badCard(frontTitle, tags, artSvg, stat1, stat2, desc, code, quote) {
   return `
   <div class="card bad">
-    <span class="cdeco tl">☠</span><span class="cdeco tr">☠</span>
-    <span class="cdeco bl">☠</span><span class="cdeco br">☠</span>
     <div class="card-header">
       <div class="header-top"><div class="title-text">${tags[0]}</div><div class="mana-cost">☠</div></div>
       <div class="sub-line">☠ Anti-pattern of: ${frontTitle}</div>
